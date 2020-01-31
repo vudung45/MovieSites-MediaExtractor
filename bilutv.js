@@ -28,7 +28,7 @@ export default class BiluTVMediaExtractor extends MediaExtractor {
     constructor(url) {
         super(url);
     }
-    async extractMedia() {
+    async extractMedias() {
         let web = await request(this.url); // load the page
         // parse the webpage source to extract movieID and episodeID
         let movieID = parseInt(web.body.match(/MovieID( *)=( *)'\d*'/)[0].replace(/MovieID( *)=( *)/, "").replace("'", ""));
@@ -55,7 +55,7 @@ export default class BiluTVMediaExtractor extends MediaExtractor {
                     let iframeUrl = playerSrc.match(/iframe (.*) src="(.*?)"/)[0].replace(/iframe (.*) src="/, '').replace('"', '');
                     if (iframeUrl.charAt(0) == '/') // if the iframe source is a relative URL
                         iframeUrl = "https://bilutv.org" + iframeUrl;
-                    
+
                     // if the iframe is embeding source from HydraxMedia
                     if(iframeUrl.includes("slug")) { 
                         try {
@@ -69,7 +69,6 @@ export default class BiluTVMediaExtractor extends MediaExtractor {
                     } else {
                          availableMedias.push(new MediaSource(iframeUrl, "iframe").getJson());
                     }
-
                 } else if (playerSrc.includes("<div class=\"player\">")) { // normal mp4 media type
                     let sources = JSON.parse(playerSrc.match(/sources:( *)\[(.|\n)*?\]/)[0].replace(/sources:( *)/, ""));
                     sources.map(m => availableMedias.push(new MediaSource(m["file"], m["type"], m["label"]).getJson()));

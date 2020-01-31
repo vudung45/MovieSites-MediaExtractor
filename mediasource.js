@@ -13,7 +13,7 @@ export default class MediaSource {
             "source": this.source,
             "type": this.mediaType,
             "label": this.label,
-            "host" : extractHostname(this.source)
+            "host" : extractHostname(this.source),
         };
     }
 }

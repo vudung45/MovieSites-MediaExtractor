@@ -19,7 +19,7 @@ export default class KhoaiTVMediaExtractor extends MediaExtractor
         super(url);
     }
 
-    async extractMedia() {
+    async extractMedias() {
         let urlResp = await request(this.url);
         let html_parser = parse(urlResp.body);
         let iframeURL = html_parser.querySelector("iframe").rawAttrs.match(/src="(.*?)"/g)[0].replace('src="','').replace('"','');

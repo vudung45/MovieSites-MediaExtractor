@@ -18,7 +18,7 @@ export async function getVipHLSHydrax(hydrax_slug, hydrax_key, origin, proxy=nul
         'value': hydrax_slug
     };
     // POST to hyrax API
-    let apiResponse = JSON.parse((await request(HYDRAX_VIP_API,{
+    let apiResponse = JSON.parse((await request(HYDRAX_VIP_API, {
         "headers": headers, 
         "data": data,
         "method": "POST",

@@ -8,7 +8,7 @@ export default class PhimmoiMediaExtractor extends MediaExtractor {
 		super(url);
 	}
 
-	async extractMedia() {
+	async extractMedias() {
 		throw "Not implemented";
 	}
 }

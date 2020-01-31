@@ -5,7 +5,7 @@ export default class MediaExtractor
 		this.url = url;
 	}
 
-	extractMedia() { 
+	extractMedias() { 
 
 	}
 }
