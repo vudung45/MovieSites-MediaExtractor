@@ -1,4 +1,4 @@
-
+import {extractHostname} from './utils/helper.js'
 export default class MediaSource {
     constructor(source, mediaType="iframe", label="") {
         this.source = source;
@@ -13,6 +13,7 @@ export default class MediaSource {
             "source": this.source,
             "type": this.mediaType,
             "label": this.label,
+            "host" : extractHostname(this.source)
         };
     }
 }
