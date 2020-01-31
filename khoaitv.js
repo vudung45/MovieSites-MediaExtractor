@@ -3,6 +3,15 @@ import request from 'async-request';
 import { parse } from 'node-html-parser';
 import MediaSource from './mediasource.js'
 
+/* 
+ Problems:
+	- Pretty simple schema. 
+	- KhoaiTV enables cross-origins access and media source is eagerly loaded 
+		so we don't have to do any workaround here
+ Solution:
+    - Parse the page source code for <iframe> tag
+*/
+
 export default class KhoaiTVMediaExtractor extends MediaExtractor
 {
 	constructor(url) {

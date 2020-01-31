@@ -9,6 +9,16 @@ import webdriver from 'selenium-webdriver';
 
 let NUM_SOURCES = 4; // number of alternative movie sources
 
+/* 
+ Problems:
+	- BiluTV lazy loads media sources through Javascript, 
+    - Certain authorization cookies are only populated when the page is loaded.
+ Solution:
+    - Utilizes selenium-webdriver to simulate a brower session to access BiluTV 
+      for authorization cookies to be populated.
+    - Excute ajax calls within the same session to retrieve embeding media sources
+*/
+
 export default class BiluTVMediaExtractor extends MediaExtractor
 {
 	
