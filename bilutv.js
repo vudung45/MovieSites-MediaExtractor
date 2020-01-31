@@ -19,12 +19,13 @@ export default class BiluTVMediaExtractor extends MediaExtractor
 
 	async extractMedia() {
 		let web = await this.driver.get(this.url); // load the page
+		// wait until JQuery is loaded, so we can later call $.ajax()
 		await this.driver.wait(async function(){
 			return await this.driver.executeScript("try {return jQuery.active == 0;} catch(e) {return 0;}") == 1;
  
 		}.bind(this));
 		// parse the webpage source to extract movieID and episodeID
-		let pageSource =await this.driver.getPageSource();
+		let pageSource = await this.driver.getPageSource();
 		let movieID = parseInt(pageSource.match(/MovieID( *)=( *)'\d*'/)[0].replace(/MovieID( *)=( *)/,"").replace("'",""));
 		let episodeID = parseInt(pageSource.match(/EpisodeID( *)=( *)'\d*'/)[0].replace(/EpisodeID( *)=( *)/,"").replace("'",""));
 		let source = NUM_SOURCES; 
@@ -48,14 +49,13 @@ export default class BiluTVMediaExtractor extends MediaExtractor
 						availableMedias.push(new MediaSource(iframeUrl, "iframe").getJson());
 				} else if(playerSrc.includes("<div class=\"player\">")) { // normal mp4 media type
 					let sources = JSON.parse(playerSrc.match(/sources:( *)\[(.|\n)*?\]/)[0].replace(/sources:( *)/, ""));
-					sources.map(m => availableMedias.push(new MediaSource(m["file"], m["type"], m["label"]).getJson()))
+					sources.map(m => availableMedias.push(new MediaSource(m["file"], m["type"], m["label"]).getJson()));
 				}
 			} catch (e) {
-				//console.log(`Error: ${e}\nplayerSrc: ${playerSrc}`)
+				//console.log(`Error: ${e}\nplayerSrc: ${playerSrc}`);
 			}
 		}
 		return availableMedias;
-
 	}
 
 }

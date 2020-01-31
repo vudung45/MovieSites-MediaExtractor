@@ -2,8 +2,8 @@
 export default class MediaSource {
     constructor(source, mediaType="iframe", label="") {
         this.source = source;
-        this.mediaType = mediaType
-        this.label = label
+        this.mediaType = mediaType;
+        this.label = label;
     }
 
 
@@ -13,6 +13,6 @@ export default class MediaSource {
             "source": this.source,
             "type": this.mediaType,
             "label": this.label,
-        }
+        };
     }
 }
