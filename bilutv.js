@@ -45,7 +45,7 @@ export default class BiluTVMediaExtractor extends MediaExtractor
 						let iframeUrl = playerSrc.match(/iframe (.*) src="(.*?)"/)[0].replace(/iframe (.*) src="/, '').replace('"', '');
 						if(iframeUrl.charAt(0) == '/') // if the iframe source is a relative URL
 							iframeUrl = "https://bilutv.org" + iframeUrl;
-						availableMedias.push(new MediaSource(iframeUrl, "iframe").getJson);
+						availableMedias.push(new MediaSource(iframeUrl, "iframe").getJson());
 				} else if(playerSrc.includes("<div class=\"player\">")) { // normal mp4 media type
 					let sources = JSON.parse(playerSrc.match(/sources:( *)\[(.|\n)*?\]/)[0].replace(/sources:( *)/, ""));
 					sources.map(m => availableMedias.push(new MediaSource(m["file"], m["type"], m["label"]).getJson()))
