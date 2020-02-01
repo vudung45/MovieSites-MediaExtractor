@@ -13,3 +13,9 @@ let _hydrax = new Hydrax(hydraxCache);
 		"key": "bf54163828fbcf4178fe249641b1f519"
 	}));
 })();
+
+(async function(){
+	console.log(await _hydrax.getMediaSource({
+		"slug": "2CJ_icSgl"
+	}));
+})();

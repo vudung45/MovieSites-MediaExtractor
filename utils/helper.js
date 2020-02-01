@@ -21,3 +21,7 @@ export function extractHostname(url) {
 export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+export function getProp(object, key, d=null){
+    return object.hasOwnProperty(key) ? object[key] : d;
+};

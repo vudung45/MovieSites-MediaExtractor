@@ -4,9 +4,6 @@ import GoogleDrive from './googledrive.js';
 import LocalJsonCacheManager from '../cache_manager/localjsoncache.js'
 
 
-let hydraxCache = new LocalJsonCacheManager({
-	"path":  __dirname+'/cache/hydrax.cache'
-});
 
-exports.Hydrax = new Hydrax(hydraxCache);
-exports.GoogleDrive = GoogleDrive;
+exports.Hydrax = new Hydrax();
+// exports.GoogleDrive = new GoogleDrive();

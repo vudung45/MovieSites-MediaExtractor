@@ -4,8 +4,8 @@ import request from "async-request";
 
 export default class PhimmoiMediaExtractor extends MediaExtractor {
 
-	constructor(url) {
-		super(url);
+	constructor(movieID, episodeID) {
+		super(movieID, episodeID);
 	}
 
 	async extractMedias() {

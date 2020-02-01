@@ -7,4 +7,9 @@ export default class StreamingService {
 	async getMediaSource(aux) {
 
 	}
+
+	useCache(cacheManager) {
+		this.cacheManager = cacheManager;
+	}
+
 }
