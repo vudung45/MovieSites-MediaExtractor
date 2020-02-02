@@ -18,14 +18,23 @@ let apiCache = new LocalJsonCacheManager({
 BiluTVAPI.useCache(apiCache);
 Hydrax.useCache(streamCache);
 
-// (async function() {
-// let khoaitv_test = new KhoaiTVMediaExtractor(13422,1);
-// 	khoaitv_test.extractMedias().then(r => {
-// 		console.log(`[TEST 1] get media srcs for: http://khoaitv.org/phim/dreaming-back-to-the-qing-dynasty-mong-hoi-dai-thanh-13422`);
-// 		console.log(r);
-// 		}
-// 	);
-// })();
+(async function() {
+let khoaitv_test = new KhoaiTVMediaExtractor(13422,1);
+	khoaitv_test.extractMedias().then(r => {
+		console.log(`[TEST 1] get media srcs for: http://khoaitv.org/phim/dreaming-back-to-the-qing-dynasty-mong-hoi-dai-thanh-13422`);
+		console.log(r);
+		}
+	);
+})();
+
+(async function() {
+let khoaitv_test = new KhoaiTVMediaExtractor(13318,1);
+	khoaitv_test.extractMedias().then(r => {
+		console.log(`[TEST 1.5] get media srcs for: http://khoaitv.org/phim/joy-of-life-khanh-du-nien-13318-tap-1`);
+		console.log(r);
+		}
+	);
+})();
 
 
 (async function() {
