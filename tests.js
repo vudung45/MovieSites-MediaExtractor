@@ -15,7 +15,7 @@ let apiCache = new LocalJsonCacheManager({
 	"path":  __dirname+'/stream_services/cache/siteAPI.cache'
 }, false);
 
-//BiluTVAPI.useCache(apiCache);
+BiluTVAPI.useCache(apiCache);
 Hydrax.useCache(streamCache);
 
 // (async function() {

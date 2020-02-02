@@ -17,10 +17,6 @@ export default class BiluTVAPI extends SiteAPI  {
         super(cacheManager);
     }
 
-    useCache(cacheManager) {
-        this.cacheManager;
-    }
-
     async _manual_getMediadata(aux) {
         /* 
          @param 
