@@ -1,4 +1,4 @@
-import SiteAPI from './base.js';
+import SiteMedia from '../../base/api/base_getmedia.js';
 import request from 'async-request';
 
 
@@ -11,9 +11,9 @@ const FAKE_HEADERS = {
         "Accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,vi;q=0.6",
 };
 
-export default class BiluTVAPI extends SiteAPI  {
+class BiluTVMedia extends SiteMedia  {
 
-    constructor(cacheManager=null, cachePrefix="BiluTVAPI") {
+    constructor(cacheManager=null, cachePrefix="BiluTVMedia") {
         super(cacheManager);
     }
 
@@ -71,3 +71,5 @@ export default class BiluTVAPI extends SiteAPI  {
     }
 
 }
+
+module.exports = new BiluTVMedia();

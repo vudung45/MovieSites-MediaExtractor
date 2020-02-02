@@ -1,3 +1,6 @@
+import fs from 'fs';
+
+
 export function extractHostname(url) {
     let hostname;
     //find & remove protocol (http, ftp, etc.) and get hostname
@@ -25,3 +28,35 @@ export function sleep(ms) {
 export function getProp(object, key, d=null){
     return object.hasOwnProperty(key) ? object[key] : d;
 };
+
+
+export function moduleUseCache(modulePath, cacheManager, _import="default"){
+
+    try {
+        let module = null;
+        if(_import = "default") {
+            module = require(modulePath);
+        } else {
+            module = require(modulePath)[_import];
+        }
+        module.useCache(cacheManager);
+    } catch (e) {
+        console.log(e);
+    }
+
+}
+
+export function getSupportedSites(packagePath){
+    let supportedSites = [];
+    try {
+        let files = fs.readdirSync(packagePath, { withFileTypes: true });
+        files.map((f) => {
+            if(f.isDirectory() && f.name != "base")
+                supportedSites.push(f.name)
+        });
+    } catch (e) {
+        console.log(e);
+    }
+    return supportedSites;
+
+}

@@ -1,10 +1,10 @@
-import MediaExtractor from './base.js'
+import MediaExtractor from '../base/base_mediaextractor'
 import request from 'async-request';
 import { parse } from 'node-html-parser';
-import MediaSource from '../utils/mediasource.js'
-import { Hydrax } from '../stream_services/services.js'
-import { getProp } from '../utils/helper.js'
-import { KhoaiTVAPI } from '../sites-api/wrappers.js'
+import MediaSource from '../../utils/mediasource.js'
+import { Hydrax } from '../../stream_services/services.js'
+import { getProp } from '../../utils/helper.js'
+import Media from './api/getmedia.js'
 
 /* 
  Problems:
@@ -26,7 +26,7 @@ export default class KhoaiTVMediaExtractor extends MediaExtractor
 
     async extractMedias() {
         let medias = [];
-        let response = await KhoaiTVAPI.getMediaMetadata({
+        let response = await Media.getMediaMetadata({
             "movieID": this.movieID,
             "episodeID": this.episodeID
         });

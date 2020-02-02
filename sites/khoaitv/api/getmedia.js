@@ -1,7 +1,5 @@
-import SiteAPI from './base.js';
+import SiteMedia from '../../base/api/base_getmedia.js';
 import request from 'async-request';
-import { parse } from 'node-html-parser';
-
 
 
 const AJAX_PLAYER_API = "https://bilutv.org/ajax/player/";
@@ -15,9 +13,9 @@ const FAKE_HEADERS = {
 
 
 const KHOAITV_BASE_PHIMURL = "http://khoaitv.org/embed.php"
-export default class BiluTVAPI extends SiteAPI  {
+class KhoaiTVMedia extends SiteMedia  {
 
-    constructor(cacheManager=null, cachePrefix="KhoaiTVAPI") {
+    constructor(cacheManager=null, cachePrefix="KhoaiTVMedia") {
         super(cacheManager);
     }
 
@@ -67,3 +65,5 @@ export default class BiluTVAPI extends SiteAPI  {
     }
 
 }
+
+module.exports = new KhoaiTVMedia();

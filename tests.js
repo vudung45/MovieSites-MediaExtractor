@@ -1,21 +1,27 @@
-import PhimMoiMediaExtractor from "./sites/phimmoi.js";
-import KhoaiTVMediaExtractor from "./sites/khoaitv.js";
-import BiluTVMediaExtractor from "./sites/bilutv.js"
+// import PhimMoiMediaExtractor from "./sites/phimmoi/phimmoi.js";
+import KhoaiTVMediaExtractor from "./sites/khoaitv/mediaextractor.js";
+import BiluTVMediaExtractor from "./sites/bilutv/mediaextractor.js"
 import { Hydrax } from './stream_services/services.js'
-import { BiluTVAPI } from './sites-api/wrappers.js'
+import { getSupportedSites, moduleUseCache} from './utils/helper.js'
 import LocalJsonCacheManager from './cache_manager/localjsoncache.js'
 
+
+// Ultilize cache for all sites's api modules
+let supportedSites = getSupportedSites(__dirname+"/sites");
+
+let apiCache = new LocalJsonCacheManager({
+	"path":  __dirname+'/stream_services/cache/siteAPI.cache'
+}, false);
+
+supportedSites.map(site => {
+	moduleUseCache(__dirname+`/sites/${site}/api/getmedia.js`, apiCache);
+});
 
 
 let streamCache = new LocalJsonCacheManager({
 	"path":  __dirname+'/stream_services/cache/stream.cache'
 }, false);
 
-let apiCache = new LocalJsonCacheManager({
-	"path":  __dirname+'/stream_services/cache/siteAPI.cache'
-}, false);
-
-BiluTVAPI.useCache(apiCache);
 Hydrax.useCache(streamCache);
 
 (async function() {
