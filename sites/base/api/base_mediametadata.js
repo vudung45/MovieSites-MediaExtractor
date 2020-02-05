@@ -1,6 +1,6 @@
 
 
-export default class SiteMedia {
+export default class SiteMediaMetadata {
     constructor(cacheManager=null, cachePrefix="BiluTVAPI") {
         this.cacheManager = cacheManager;
         this.cachePrefix = cachePrefix
@@ -25,13 +25,13 @@ export default class SiteMedia {
         if(data)
             return data;
 
-        data = await this._manual_getMediadata(aux);
+        data = await this._manual_getMediaMetadata(aux);
         if(data && this.cacheManager != null) //cache
             await this.cacheManager.update(this._prefixifyData(JSON.stringify(aux)), data);
         
         return data;
     }
 
-    async _manual_getMediadata(aux) {
+    async _manual_getMediaMetadata(aux) {
     }
 }

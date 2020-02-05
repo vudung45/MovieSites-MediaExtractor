@@ -1,3 +1,5 @@
+'use non-strict';
+
 import fs from 'fs';
 
 
@@ -18,6 +20,10 @@ export function extractHostname(url) {
     hostname = hostname.split('?')[0];
 
     return hostname;
+}
+
+export function genHydraxURL(slug) {
+    return `https://hydrax.net/watch?v=${slug}`;
 }
 
 
@@ -59,4 +65,34 @@ export function getSupportedSites(packagePath){
     }
     return supportedSites;
 
+}
+
+export function unpackJS(p) {
+    var p = p,
+        c = p;
+    var a = 10,
+        x = 1;
+    while (x < a) {
+        c = unescape(c);
+        if (/eval\(+function\(/.test(c)) {
+            c = depack(c);
+            x++
+        } else {
+            break
+        }
+    };
+    c = unescape(c);
+    return c;
+}
+
+function depack(p) {
+    var c = "";
+    if (p != "") {
+        c = unescape(p);
+        var _e = eval, s = "eval=function(v){c=v;};" + c + ";eval=_e;";
+        eval(s);
+    } else {
+        c = p;
+    };
+    return c;
 }

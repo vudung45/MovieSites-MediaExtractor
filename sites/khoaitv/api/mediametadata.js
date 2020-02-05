@@ -1,4 +1,4 @@
-import SiteMedia from '../../base/api/base_getmedia.js';
+import SiteMediaMetadata from '../../base/api/base_mediametadata.js';
 import request from 'async-request';
 
 
@@ -13,13 +13,13 @@ const FAKE_HEADERS = {
 
 
 const KHOAITV_BASE_PHIMURL = "http://khoaitv.org/embed.php"
-class KhoaiTVMedia extends SiteMedia  {
+class KhoaiTVMetadata extends SiteMediaMetadata  {
 
-    constructor(cacheManager=null, cachePrefix="KhoaiTVMedia") {
+    constructor(cacheManager=null, cachePrefix="KhoaiTVMetadata") {
         super(cacheManager);
     }
 
-    async _manual_getMediadata(aux) {
+    async _manual_getMediaMetadata(aux) {
         /* 
          @param 
                 aux     {
@@ -35,8 +35,7 @@ class KhoaiTVMedia extends SiteMedia  {
         try {
             let urlResp = await request(`${KHOAITV_BASE_PHIMURL}?id=${aux["movieID"]}&ep=${aux["episodeID"]}`);
             // parse content between .setup({.*}) in the new page
-            let jwPlayerSetupContent = urlResp.body.match(/\.setup\({(.*?)}\)/)[0].replace(/\.setup\(( *)/,'');
-            jwPlayerSetupContent = jwPlayerSetupContent.slice(0, jwPlayerSetupContent.length - 1);
+            let jwPlayerSetupContent = urlResp.body.match(/\.setup\(({.*?})\)/)[1];
             let jwSettings = {}
             try {
                 eval(`jwSettings = ${jwPlayerSetupContent}`);
@@ -48,7 +47,7 @@ class KhoaiTVMedia extends SiteMedia  {
             {
                 return {
                     "type": "video-sources",
-                    "data": jwSettings
+                    "data": [jwSettings]
                 }
             } else {
                 // if no video source, then we'd have to go with the iframe path
@@ -66,4 +65,4 @@ class KhoaiTVMedia extends SiteMedia  {
 
 }
 
-module.exports = new KhoaiTVMedia();
+module.exports = new KhoaiTVMetadata();

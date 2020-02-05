@@ -7,17 +7,16 @@ export default class MediaSource {
         this.label = label;
     }
 
-    static fromJson(json) {
-        return new MediaSource(getProp(json, "source"), getProp(json, "type"), getProp(json, "label"));
+    static createFrom(json) {
+        return new MediaSource(getProp(json, "file"), getProp(json, "type"), getProp(json, "label"));
     }
 
     getJson()
     {
         return {
-            "source": this.source,
+            "file": this.source,
             "type": this.mediaType,
             "label": this.label,
-            "host" : extractHostname(this.source),
         };
     }
 }

@@ -1,4 +1,4 @@
-import SiteMedia from '../../base/api/base_getmedia.js';
+import SiteMediaMetadata from '../../base/api/base_mediametadata.js';
 import request from 'async-request';
 
 
@@ -11,13 +11,13 @@ const FAKE_HEADERS = {
         "Accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,vi;q=0.6",
 };
 
-class BiluTVMedia extends SiteMedia  {
+class BiluTVMetadata extends SiteMediaMetadata  {
 
-    constructor(cacheManager=null, cachePrefix="BiluTVMedia") {
+    constructor(cacheManager=null, cachePrefix="BiluTVMetadata") {
         super(cacheManager);
     }
 
-    async _manual_getMediadata(aux) {
+    async _manual_getMediaMetadata(aux) {
         /* 
          @param 
                 aux     {
@@ -32,7 +32,6 @@ class BiluTVMedia extends SiteMedia  {
                         }
         */
         try {
-            // execute ajax in browser environment to get video source
             let playerSrc = (await request(AJAX_PLAYER_API, 
             {
                 "method": "POST",
@@ -58,10 +57,11 @@ class BiluTVMedia extends SiteMedia  {
                 let sources = {}
                 // JSON.parse() doesn't always work because sometime their stupid script doesn't include quotation
                 eval(`sources = ${playerSrc.match(/sources:( *)\[(.|\n)*?\]/)[0].replace(/sources:( *)/, "")}`);
-
-                return {
-                    "type": "video-sources",
-                    "data": sources
+                if(sources.length > 0) {
+                    return {
+                        "type": "video-sources",
+                        "data": sources
+                    }
                 }
             }
         } catch (e) {
@@ -72,4 +72,4 @@ class BiluTVMedia extends SiteMedia  {
 
 }
 
-module.exports = new BiluTVMedia();
+module.exports = new BiluTVMetadata();

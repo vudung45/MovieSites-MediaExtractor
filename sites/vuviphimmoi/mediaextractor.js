@@ -1,28 +1,32 @@
-import MediaExtractor from '../base/base_mediaextractor'
+import MediaExtractor from '../base/base_mediaextractor.js'
 import request from 'async-request';
-import { parse } from 'node-html-parser';
-import MediaSource from '../../utils/mediasource.js'
-import { Hydrax } from '../../stream_services/services.js'
-import { getProp } from '../../utils/helper.js'
-import MediaMetadata from './api/mediametadata.js'
+import {
+    parse
+} from 'node-html-parser';
+import MediaSource from '../../utils/mediasource.js';
+import MediaMetadata from './api/mediametadata.js';
 import {simpleGetLinkDriver} from '../../stream_services/services.js';
-
-
 /* 
  Problems:
-    - Pretty simple schema. 
-    - KhoaiTV enables cross-origins access and media source is eagerly loaded 
-        so we don't have to do any workaround here
+    - /ajax/player blocks cors
  Solution:
-    - Parse the page source code for <iframe> tag
+    - Modify Origin in request's headers
 */
 
+const NUM_SOURCES = 4; // number of alternative movie sources
+const FAKE_HEADERS = {
+        "Content-type" : "application/x-www-form-urlencoded; charset=UTF-8",
+        "User-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36",
+        "Origin": "https://bilutv.org",
+        "Referrer": "https://bilutv.org/",
+        "Accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,vi;q=0.6",
+};
 
-const KHOAITV_BASE_PHIMURL = "http://khoaitv.org/phim/"
-export default class KhoaiTVMediaExtractor extends MediaExtractor
-{
+const BASE_URL = "https://vuviphimmoi.com/xem-phim";
+
+
+export default class VuViPhimMoi extends MediaExtractor {
     constructor(movieID, episodeID) {
-        //http://khoaitv.org/phim/dreaming-back-to-the-qing-dynasty-mong-hoi-dai-thanh-13422-tap-1
         super(movieID, episodeID);
     }
 
@@ -53,6 +57,5 @@ export default class KhoaiTVMediaExtractor extends MediaExtractor
             medias.push([new MediaSource(iframeSrc, "iframe").getJson()]);
         }
         return medias;
-    } 
-
+    }
 }

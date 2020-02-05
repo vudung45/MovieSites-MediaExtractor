@@ -1,6 +1,6 @@
 
 export default class CacheManager {
-    constructor(settings, syncRoutine)  {
+    constructor(settings, ttl, syncRoutine)  {
         this.settings=settings
         this._processSettings();
         if(syncRoutine)

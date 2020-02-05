@@ -5,7 +5,7 @@ import util from 'util'
 import  Promise from 'promise';
 
 export default class LocalJsonCacheManager extends CacheManager {
-    constructor(settings, syncRoutine=true) {
+    constructor(settings, ttl=3600, syncRoutine=true) {
         super(settings,syncRoutine);
 
     }
@@ -38,7 +38,9 @@ export default class LocalJsonCacheManager extends CacheManager {
 
     }
 
-    async update(key, value, ttl=3600) {
+    async update(key, value, ttl=null) {
+        if(ttl = null)
+            ttl = this.ttl;
         this.data[key] = {
             access: new Date().getTime(),
             ttl: ttl * 1000,
@@ -64,7 +66,8 @@ export default class LocalJsonCacheManager extends CacheManager {
             /* iterate through each key and delete expired TTL keys */
             let needUpdate = false;
             Object.keys(this.data).map( k => {
-                if(this.data[k].ttl + this.data[k].access < new Date().getTime())
+                if(this.data[k].ttl != null
+                    && this.data[k].ttl + this.data[k].access < new Date().getTime())
                 {
                     needUpdate = true;
                     delete this.data[k];

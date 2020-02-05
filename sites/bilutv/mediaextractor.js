@@ -5,8 +5,9 @@ import {
 } from 'node-html-parser';
 import MediaSource from '../../utils/mediasource.js';
 import fs from 'fs';
-import {Hydrax} from '../../stream_services/services.js'
-import Media from './api/getmedia.js'
+import {simpleGetLinkDriver} from '../../stream_services/services.js'
+import MediaMetadata from './api/mediametadata.js';
+import {genHydraxURL} from '../../utils/helper.js';
 /* 
  Problems:
     - /ajax/player blocks cors
@@ -33,51 +34,48 @@ export default class BiluTVMediaExtractor extends MediaExtractor {
     async extractMedias() {
         // parse the webpage source to extract movieID and episodeID
         let source = NUM_SOURCES;
-        let availableMedias = [];
+        let medias = [];
         //iterate through each alternative media sources, and attempt to crawl video source
         while (source-- > 0) {
             try {
-                // utilize BiluTVAPI wrapper class to take advantage of caching system
-                let response = await Media.getMediaMetadata({
+                //1st layer cache
+                let mediaMetadata = await MediaMetadata.getMediaMetadata({
                     "movieID": this.movieID,
                     "episodeID": this.episodeID,
                     "sv": source
                 });
-                if(!response)
-                    continue;
-
-                if(response.type == "iframe") {
-                    let iframeUrl = response.data;
-                    // if the iframe is embeding source from HydraxMedia
-                    if(iframeUrl.includes("slug")) {
+                if(mediaMetadata.type == "video-sources") {
+                    let bundle = []
+                    mediaMetadata.data.map(m => {
+                        if(m["file"] != "error") 
+                            bundle.push(MediaSource.createFrom(m).getJson())
+                    });
+                    if(bundle.length)
+                         medias.push(bundle);
+                } else if(mediaMetadata.type == "iframe") {
+                    let iframeSrc = mediaMetadata.data;
+                    //2nd layer cache
+                    if(iframeSrc.includes("slug")) {
+                        let urlObj = new URL(iframeSrc);
+                        iframeSrc = genHydraxURL(urlObj.searchParams.get("slug"));
                         try {
-                            let urlObj = new URL(iframeUrl);
-                            let hlsMedias = await Hydrax.getMediaSource({
-                                slug: urlObj.searchParams.get("slug"), 
+                            let streamLinks = await simpleGetLinkDriver({
+                                url: iframeSrc,
                                 key: urlObj.searchParams.get("key"), 
-                                origin: iframeUrl
+                                origin: "https://bilutv.org/"
                             });
-                            
-                            if(hlsMedias)
-                                hlsMedias.map(m => availableMedias.push(m));
-                        } catch(e) {
-                           console.log(e);
+                            if(streamLinks)
+                                medias = medias.concat(streamLinks);
+                        } catch (e) {
+                            console.log("Error extracting hydrax \n" +e)
                         }
                     }
-                } else if(response.type == "video-sources") {
-                    let sources = response.data;
-                    if(!sources)
-                        continue;
-
-                    sources.map(m => {
-                        if(m["file"] != "error")
-                            availableMedias.push(new MediaSource(m["file"], m["type"], m["label"]).getJson());
-                    });   
+                    medias.push([new MediaSource(iframeSrc, "iframe").getJson()]);
                 }
             } catch (e) {
                 console.log(`Error: ${e}`);
             }
         }
-        return availableMedias;
+        return medias;
     }
 }

@@ -4,7 +4,7 @@ import path from 'path';
 
 export default class Hydrax extends StreamingService {
     constructor(cacheManager=null) {
-        super(cacheManager);
+        super(cacheManager, "Hydrax");
     }
 
     async _getProxy(){
@@ -19,7 +19,7 @@ export default class Hydrax extends StreamingService {
         
         if(src == null) {
             try {
-                if("key" in aux)  // use vip API
+                if("key" in aux && aux["key"])  // use vip API
                     src = await getVipHLSHydrax(aux["slug"], aux["key"], aux["origin"], await this._getProxy(), "includeOrigin" in aux ? aux["includeOrigin"] : false);
                 else  //use guest API
                     src = await getGuestHLSHydrax(aux["slug"], null, aux["origin"], await this._getProxy(), "includeOrigin" in aux ? aux["includeOrigin"] : false);
@@ -34,5 +34,4 @@ export default class Hydrax extends StreamingService {
         return src;
 
     }
-
 }
