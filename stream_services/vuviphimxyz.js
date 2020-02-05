@@ -45,8 +45,8 @@ export default class VuViPhimStream extends StreamingService {
 
                 sourcesRegex = sources.match(/sources:\s?(\[.*?\]),/);
                 if(sourcesRegex.length) {
-                    sources = sourcesRegex[1].replace("sources:", "").replace(/(?<={|,)([a-zA-Z][a-zA-Z0-9]*)(?=:)'/, "");
-                    jsonSources = JSON.parse(sources);
+                    sources = sourcesRegex[1].replace(/(?<={|,)([a-zA-Z][a-zA-Z0-9]*)(?=:)'/, "");
+                    let jsonSources = JSON.parse(sources);
                     if(jsonSources.length){
                         src = []
                         jsonSources.map(m => src.push(new MediaSource(getProp(m, "file"),getProp(m, "type"), getProp(m, "label")).getJson()));

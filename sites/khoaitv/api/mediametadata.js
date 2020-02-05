@@ -34,10 +34,9 @@ class KhoaiTVMetadata extends SiteMediaMetadata  {
         */
         try {
             let urlResp = await request(`${KHOAITV_BASE_PHIMURL}?id=${aux["movieID"]}&ep=${aux["episodeID"]}`);
-            // parse content between .setup({.*}) in the new page
-            let jwPlayerSetupContent = urlResp.body.match(/\.setup\(({.*?})\)/)[1];
             let jwSettings = {}
             try {
+                let jwPlayerSetupContent = urlResp.body.match(/\.setup\(({.*?})\)/)[1];
                 eval(`jwSettings = ${jwPlayerSetupContent}`);
             } catch (e) {
                 console.log("khoaitv_wrapper.js: error on parsing jwSettings:\n"+e);

@@ -30,7 +30,6 @@ exports.simpleGetLinkDriver = async function(aux) {
             let videoSources = await exports.VuViPhimStream.getMediaSource({
                    "url": url
                 }); 
-            
             if(videoSources)
                 medias.push(videoSources);
         } catch (e) {

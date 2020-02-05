@@ -45,7 +45,7 @@ class BiluTVMetadata extends SiteMediaMetadata  {
             })).body;
             let response = {}
             if (playerSrc.includes("box-player")) {
-                let iframeUrl = playerSrc.match(/iframe (.*) src="(.*?)"/)[0].replace(/iframe (.*) src="/, '').replace('"', '');
+                let iframeUrl = playerSrc.match(/iframe .* src="(.*?)"/)[1];
                 if (iframeUrl.charAt(0) == '/') // if the iframe source is a relative URL
                         iframeUrl = "https://bilutv.org" + iframeUrl;
 
@@ -56,7 +56,7 @@ class BiluTVMetadata extends SiteMediaMetadata  {
             } else if (playerSrc.includes("<div class=\"player\">")) {
                 let sources = {}
                 // JSON.parse() doesn't always work because sometime their stupid script doesn't include quotation
-                eval(`sources = ${playerSrc.match(/sources:( *)\[(.|\n)*?\]/)[0].replace(/sources:( *)/, "")}`);
+                eval(`sources = ${playerSrc.match(/sources:( *\[(.|\n)*?\])/)[1]}`);
                 if(sources.length > 0) {
                     return {
                         "type": "video-sources",
