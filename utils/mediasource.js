@@ -19,4 +19,8 @@ export default class MediaSource {
             "label": this.label,
         };
     }
+
+    toString() {
+        return JSON.stringify(this.getJson());
+    }
 }

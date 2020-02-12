@@ -4,8 +4,8 @@ import VuViPhimStream from './vuviphimxyz.js';
 import {getProp} from '../utils/helper.js';
 
 
-exports.Hydrax = new Hydrax();
-exports.VuViPhimStream = new VuViPhimStream();
+exports.Hydrax = Hydrax;
+exports.VuViPhimStream = VuViPhimStream;
 
 //driver for each streaming service
 exports.simpleGetLinkDriver = async function(aux) {

@@ -1,71 +1,45 @@
 import request from 'async-request';
-import extractHostname from './helper.js'
-import MediaSource from './mediasource.js'
-
-const HYDRAX_SUPPORTED_MEDIA =  new Set(['fullhd', 'hd', 'mhd', 'sd', 'origin']);
-const HYDRAX_VIP_API = "https://multi.hydrax.net/vip"
-const HYDRAX_GUEST_API = "https://multi.hydrax.net/guest"
+import {extractHostname, PasteBin, get_drive_link} from './helper.js'
+import Promise from 'promise';
+import atob from 'atob';
 
 
-function get_m3u8_smamuhh1metro(server, media, origin, includeOrigin=false){
-    let m3u8Src = `${server}/${"sig" in media ? media.sig : 0}/0/playlist.m3u8`;
-    if(includeOrigin) {
-        let _headers = {
-            'Origin': origin,
-            'User-Agent': "Chrome/59.0.3071.115 Safari/537.36",
-            'Referer': origin
+export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink=true, pasteutil=PasteBin){
+    let txt = "#EXTM3U\n#EXT-X-VERSION:4\n#EXT-X-PLAYLIST-TYPE:VOD\n#EXT-X-TARGETDURATION:" + data['duration'] + "\n#EXT-X-MEDIA-SEQUENCE:0\n"
+
+    if('hash' in data){
+        txt += `#EXT-X-HASH:${data['hash']}\n`
+        txt += `#EXT-X-KEY:METHOD=AES-128,URI=https://${streamServer}/hash/${data['sig']}?key=${data['hash']},IV=${data['iv']}\n`
+    }
+
+    let d = data['ranges'];
+    let s = 0;
+    let u = data['ids'];
+    let jointAsync = [];
+    data['ids'].forEach((id) => jointAsync.push(request(`https://${streamServer}/html/${data['sig']}/${data['id']}/${id}/0.html?domain=hydrax.net`, {
+        "headers" :  {
+                "Content-Type": "application/json",
+                "Origin" : "https://hydrax.net",
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
+        },
+        "method": "GET"
+    })));
+    let jointAwait  = await Promise.all(jointAsync);
+    let chunksUrls = [];
+    jointAwait.forEach(m => chunksUrls.push(atob(JSON.parse(m.body)["url"])));
+    for(let t = 0; t < d.length; ++t)
+    {
+        let f = chunksUrls[t];
+        for(let p = 0; p < d[t].length; ++p)
+        {
+            txt += `#EXTINF:${data['extinfs'][s]},\n`
+            txt += `#EXT-X-BYTERANGE:${d[t][p]}\n`
+            txt += `${driveLink ? get_drive_link(f) : f}\n`
+            s += 1 
         }
-        m3u8Src += `|${encodeURI(_headers)}`;
     }
-    return m3u8Src;
+    txt += "#EXT-X-ENDLIST";
+    return await pasteutil.createPaste("",txt);
 }
 
 
-async function getHLSHydrax(api, hydrax_slug, hydrax_key=null, origin, proxy=null, includeOrigin=false)
-{
-    let headers = {
-        'Referer': origin,
-        'Origin': origin,
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
-    };
-
-    let data = {}
-    if(hydrax_key) {
-        data = {
-            'key': hydrax_key,
-            'type': 'slug',
-            'value': hydrax_slug
-        };
-    } else {
-        data = {
-            'slug': hydrax_slug,
-        };
-    }
-    // POST to hyrax API
-    let apiResponse = JSON.parse((await request(api, {
-        "headers": headers, 
-        "data": data,
-        "method": "POST",
-        "proxy": proxy // possible IP ban
-    })).body);
-    let medias = [];
-    if("ping" in apiResponse && apiResponse["ping"].includes("smamuhh1metro")) {
-        let server = apiResponse["ping"];
-        Object.keys(apiResponse).map(key => {
-            if(HYDRAX_SUPPORTED_MEDIA.has(key)) 
-                medias.push(new MediaSource(get_m3u8_smamuhh1metro(server, apiResponse[key], origin, includeOrigin), "hls5", key).getJson());
-        })
-
-    } else {
-        throw `Error retrieving hydrax media source (slug: ${hydrax_slug}, key: ${hydrax_key}). Api Resp: ${JSON.stringify(apiResponse)}`
-    }
-    return medias;
-}
-
-export async function getVipHLSHydrax(hydrax_slug, hydrax_key, origin, proxy=null, includeOrigin=false) {
-    return await getHLSHydrax(HYDRAX_VIP_API, hydrax_slug, hydrax_key, origin, proxy, includeOrigin);
-}
-
-export async function getGuestHLSHydrax(hydrax_slug, hydrax_key, origin, proxy=null, includeOrigin=false) {
-    return await getHLSHydrax(HYDRAX_GUEST_API, hydrax_slug, hydrax_key, origin, proxy, includeOrigin);
-}

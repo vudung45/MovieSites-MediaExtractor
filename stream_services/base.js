@@ -5,7 +5,7 @@ export default class StreamingService {
         this.cachePrefix = cachePrefix;
 
 	}
-
+    
 	async getMediaSource(aux) {
 
 	}

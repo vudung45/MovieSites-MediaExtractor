@@ -19,12 +19,12 @@ const NUM_SOURCES = 4; // number of alternative movie sources
 const FAKE_HEADERS = {
         "Content-type" : "application/x-www-form-urlencoded; charset=UTF-8",
         "User-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36",
-        "Origin": "https://bilutv.org",
-        "Referrer": "https://bilutv.org/",
+        "Origin": "https://bilumoi.com",
+        "Referrer": "https://bilumoi.com",
         "Accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,vi;q=0.6",
 };
 
-const AJAX_PLAYER_API = "https://bilutv.org/ajax/player/";
+const AJAX_PLAYER_API = "https://bilumoi.com/ajax/player/";
 
 export default class BiluTVMediaExtractor extends MediaExtractor {
     constructor(movieID, episodeID) {
@@ -44,11 +44,15 @@ export default class BiluTVMediaExtractor extends MediaExtractor {
                     "episodeID": this.episodeID,
                     "sv": source
                 });
+                
+                if(!mediaMetadata)
+                    continue;
+
                 if(mediaMetadata.type == "video-sources") {
                     let bundle = []
                     mediaMetadata.data.map(m => {
                         if(m["file"] != "error") 
-                            bundle.push(MediaSource.createFrom(m).getJson())
+                            bundle.push(MediaSource.createFrom(m))
                     });
                     if(bundle.length)
                          medias.push(bundle);
@@ -62,7 +66,7 @@ export default class BiluTVMediaExtractor extends MediaExtractor {
                             let streamLinks = await simpleGetLinkDriver({
                                 url: iframeSrc,
                                 key: urlObj.searchParams.get("key"), 
-                                origin: "https://bilutv.org/"
+                                origin: "https://bilumoi.com/"
                             });
                             if(streamLinks)
                                 medias = medias.concat(streamLinks);
@@ -70,7 +74,7 @@ export default class BiluTVMediaExtractor extends MediaExtractor {
                             console.log("Error extracting hydrax \n" +e)
                         }
                     }
-                    medias.push([new MediaSource(iframeSrc, "iframe").getJson()]);
+                    medias.push([new MediaSource(iframeSrc, "iframe")]);
                 }
             } catch (e) {
                 console.log(`Error: ${e}`);

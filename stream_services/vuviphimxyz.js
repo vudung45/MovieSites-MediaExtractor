@@ -5,7 +5,8 @@ import MediaSource from '../utils/mediasource.js'
 
 
 const BASE_URL = "https://vuviphimmoi.com/xem-phim";
-export default class VuViPhimStream extends StreamingService {
+
+class VuViPhimStream extends StreamingService {
     constructor(cacheManager=null) {
         super(cacheManager, "vuviphimxyz");
     }
@@ -46,21 +47,21 @@ export default class VuViPhimStream extends StreamingService {
                 sourcesRegex = sources.match(/sources:\s?(\[.*?\]),/);
                 if(sourcesRegex.length) {
                     sources = sourcesRegex[1].replace(/(?<={|,)([a-zA-Z][a-zA-Z0-9]*)(?=:)'/, "");
-                    let jsonSources = JSON.parse(sources);
+                    eval(`jsonSources = ${sources}`);
                     if(jsonSources.length){
                         src = []
-                        jsonSources.map(m => src.push(new MediaSource(getProp(m, "file"),getProp(m, "type"), getProp(m, "label")).getJson()));
-                        return src;
+                        jsonSources.map(m => src.push(new MediaSource(getProp(m, "file"), getProp(m, "type"), getProp(m, "label"))));
                     }
                 }
             } catch (e) {
-
+                console.log("Error while getting vuviphim.xyz media source");
             }
         }
         if(src && this.cacheManager)
             this.cacheManager.update(JSON.stringify(aux), src);
 
         return src;
-
     }
 }
+
+module.exports = new VuViPhimStream();

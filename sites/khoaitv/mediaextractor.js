@@ -33,11 +33,15 @@ export default class KhoaiTVMediaExtractor extends MediaExtractor
             "episodeID": this.episodeID
         });
         let medias = []
+        
+        if(!mediaMetadata)
+            return [];
+
         if(mediaMetadata.type == "video-sources"){
             let bundle = []
             mediaMetadata.data.map(m => {
                 if(m["file"] != "error") 
-                    bundle.push(MediaSource.createFrom(m).getJson())
+                    bundle.push(MediaSource.createFrom(m))
             });
             if(bundle.length)
                 medias.push(bundle);
@@ -50,7 +54,7 @@ export default class KhoaiTVMediaExtractor extends MediaExtractor
             });
             if(streamLinks)
                 medias = medias.concat(streamLinks);
-            medias.push([new MediaSource(iframeSrc, "iframe").getJson()]);
+            medias.push([new MediaSource(iframeSrc, "iframe")]);
         }
         return medias;
     } 

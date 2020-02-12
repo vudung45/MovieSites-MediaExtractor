@@ -13,15 +13,6 @@ import {simpleGetLinkDriver} from '../../stream_services/services.js';
     - Modify Origin in request's headers
 */
 
-const NUM_SOURCES = 4; // number of alternative movie sources
-const FAKE_HEADERS = {
-        "Content-type" : "application/x-www-form-urlencoded; charset=UTF-8",
-        "User-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36",
-        "Origin": "https://bilutv.org",
-        "Referrer": "https://bilutv.org/",
-        "Accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,vi;q=0.6",
-};
-
 const BASE_URL = "https://vuviphimmoi.com/xem-phim";
 
 
@@ -36,12 +27,16 @@ export default class VuViPhimMoi extends MediaExtractor {
             "movieID": this.movieID,
             "episodeID": this.episodeID
         });
-        let medias = []
+        let medias = [];
+
+        if(!mediaMetadata)
+            return [];
+        
         if(mediaMetadata.type == "video-sources"){
             let bundle = []
             mediaMetadata.data.map(m => {
                 if(m["file"] != "error") 
-                    bundle.push(MediaSource.createFrom(m).getJson())
+                    bundle.push(MediaSource.createFrom(m))
             });
             if(bundle.length)
                 medias.push(bundle);
@@ -54,7 +49,7 @@ export default class VuViPhimMoi extends MediaExtractor {
             });
             if(streamLinks)
                 medias = medias.concat(streamLinks);
-            medias.push([new MediaSource(iframeSrc, "iframe").getJson()]);
+            medias.push([new MediaSource(iframeSrc, "iframe")]);
         }
         return medias;
     }

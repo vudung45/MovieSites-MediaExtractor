@@ -38,11 +38,45 @@ class VuViPhimmoiMetadata extends SiteMediaMetadata  {
         try {
             let urlResp = await request(url);
             let htmlParser = parse(urlResp.body);
-            let iframeAttrs = htmlParser.querySelector("#media").querySelector("iframe").rawAttrs;
-            let iframeURL = /src="(.*?)"/g.exec(iframeAttrs)[1];
-            return {
-                "type": "iframe",
-                "data": iframeURL
+            // first attemp to parse direct video sources in this webpage
+            // if we can't, then the video sources are probably embedded through iframe
+            let directVideoSrcs = null;
+            try {
+                let sourcesRegex = urlResp.body.match(/(eval\(function\(p,a,c,k,e,d\).*?)\s+?<\/script>/);
+                let sources = null;
+                if(sourcesRegex.length) {
+                    sources = sourcesRegex[1];
+                    sources = unpackJS(sources);
+                } else {
+                    sources = urlResp.body;
+                }
+
+                sourcesRegex = sources.match(/sources:\s?(\[.*?\]),/);
+                if(sourcesRegex.length) {
+                    sources = sourcesRegex[1].replace(/(?<={|,)([a-zA-Z][a-zA-Z0-9]*)(?=:)'/, "");
+
+                    eval(`directVideoSrcs = ${sources}`);
+                }
+            } catch (e) {
+                console.log(`${url} doesn't have direct video sources... try extracting iframe instead. \n ${e}`);
+            }
+
+            if(directVideoSrcs) {
+                return {
+                    "type": "video-sources",
+                    "data": directVideoSrcs
+                }
+            }
+            
+            //try extracting through iframe instead
+            let iframeAttrs = htmlParser.querySelector("#media").querySelector("iframe");
+            if(typeof iframeAttrs != "undefinied")
+            {
+                let iframeURL = /src="(.*?)"/g.exec(iframeAttrs)[1];
+                return {
+                    "type": "iframe",
+                    "data": iframeURL
+                }
             }
         } catch (e) {
             console.log(e);
