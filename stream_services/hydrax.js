@@ -88,7 +88,7 @@ class Hydrax extends StreamingService {
             "cacheKey" : JSON.stringify(aux)+"_getHydraxApiResp",
             ...aux
         };
-        let hydaxApiResp = await self._getHydraxApiResp({
+        let hydaxApiResp = await this._getHydraxApiResp({
             cacheKey : JSON.stringify(aux)+"_getHydraxApiResp",...aux
         });
 
