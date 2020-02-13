@@ -1,37 +1,14 @@
 
-
-export default class SiteMediaMetadata {
-    constructor(cacheManager=null, cachePrefix="BiluTVAPI") {
-        this.cacheManager = cacheManager;
-        this.cachePrefix = cachePrefix
-    }
-
-    useCache(cacheManager) {
-        this.cacheManager = cacheManager;
-    }
-
-    _prefixifyData(data) {
-        return `${this.cachePrefix}_${data}`
+import Cacheable from "../../../utils/cacheable.js"
+export default class SiteMediaMetadata extends Cacheable {
+    constructor(cacheManager=null, cachePrefix="BiluTVAPI", functions=["getMediaMetadata"]) {
+        super(cacheManager, cachePrefix, functions);
     }
 
 
-    async getMediaMetadata(aux, forceRefresh=false) {
-        /* return unprocessed metadata to later on be used for scraping media source */
-
-        let data = null;
-        if(this.cacheManager != null && !forceRefresh)
-            data = await this.cacheManager.load(this._prefixifyData(JSON.stringify(aux)));
-
-        if(data)
-            return data;
-
-        data = await this._manual_getMediaMetadata(aux);
-        if(data && this.cacheManager != null) //cache
-            await this.cacheManager.update(this._prefixifyData(JSON.stringify(aux)), data);
-        
-        return data;
+    async getMediaMetadata() {
+        throw "not yet implemented";
     }
 
-    async _manual_getMediaMetadata(aux) {
-    }
+    
 }

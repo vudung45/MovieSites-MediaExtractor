@@ -1,6 +1,5 @@
 import SiteMediaMetadata from '../../base/api/base_mediametadata.js';
-import request from 'async-request';
-
+import request from 'request-promise';
 
 const AJAX_PLAYER_API = "https://bilutv.org/ajax/player/";
 const FAKE_HEADERS = {
@@ -12,11 +11,46 @@ const FAKE_HEADERS = {
 };
 
 
-const KHOAITV_BASE_PHIMURL = "http://khoaitv.org/embed.php"
-class KhoaiTVMetadata extends SiteMediaMetadata  {
+const MOTPHIM_BASE_URL = "https://motphim.net/xem-phim/p"
+const MOTPHIM_API = "https://api.motphim.org/"
 
-    constructor(cacheManager=null, cachePrefix="KhoaiTVMetadata") {
-        super(cacheManager, cachePrefix);
+class MotphimMediadata extends SiteMediaMetadata  {
+
+    constructor(cacheManager=null, cachePrefix="MotphimMediadata") {
+        super(cacheManager, cachePrefix, ["parseApiMetadataFromSite", "getMediaMetadata"]);
+    }
+
+    async parseApiMetadataFromSite(aux) {
+        let cacheKey = this._prefixifyData(JSON.stringify(aux)+"_apiMetadata")
+        let metaData = null;
+        if(this.cacheManager)
+            metaData = this.cacheManager.get(cacheKey);
+
+        if(metaData)
+            return metaData;
+
+        // no cache
+        let urlResp = await request({
+                    uri: `${MOTPHIM_BASE_URL}-${aux["movieID"]}-${aux["episodeID"]}`,
+                    method: "GET"
+            });
+
+        eval(`let dataLink = ${urlResp.match(/var dataLink *?= *?(".*?")/)[1]}`);
+        eval(`let vId = ${urlResp.match(/var viD *?= *?(".*?")/)[1]}`);
+        eval(`let slug = ${urlResp.match(/var slug *?= *?(".*?")/)[1]}`);
+
+        metaData = {
+            "dataLink" : dataLink,
+            "vId": vId,
+            "slug": slug,
+            "eId": aux["episodeID"],
+            "filmId": aux["movieID"]
+        }
+
+        if(this.cacheManager)
+            this.cacheManager.update(cacheKey, metaData);
+
+        return metaData;
     }
 
     async getMediaMetadata(aux) {
@@ -33,11 +67,13 @@ class KhoaiTVMetadata extends SiteMediaMetadata  {
                         }
         */
         try {
-            let urlResp = await request(`${KHOAITV_BASE_PHIMURL}?id=${aux["movieID"]}&ep=${aux["episodeID"]}`);
-            console.log(urlResp);
+            //utilize cache
+            let siteMetaData =  await this._parseMetadataFromSite(aux);
+
+
             let jwSettings = {}
             try {
-                let jwPlayerSetupContent = urlResp.body.match(/\.setup\(({.*?})\)/)[1];
+                let jwPlayerSetupContent = urlResp.match(/\.setup\(({.*?})\)/)[1];
                 eval(`jwSettings = ${jwPlayerSetupContent}`);
             } catch (e) {
                 console.log("khoaitv_wrapper.js: error on parsing jwSettings:\n"+e);
@@ -51,7 +87,7 @@ class KhoaiTVMetadata extends SiteMediaMetadata  {
                 }
             } else {
                 // if no video source, then we'd have to go with the iframe path
-                let iframeSrc = urlResp.body.match(/iframe src="(.*?)"/)[0].replace('iframe src="','').replace('"','');
+                let iframeSrc = urlResp.match(/iframe src="(.*?)"/)[0].replace('iframe src="','').replace('"','');
                 return {
                     "type": "iframe",
                     "data": iframeSrc

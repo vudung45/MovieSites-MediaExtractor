@@ -43,16 +43,16 @@ class VuViPhimStream extends StreamingService {
                 } else {
                     sources = urlResp.body;
                 }
-
-                sourcesRegex = sources.match(/sources:\s?(\[.*?\]),/);
+                sourcesRegex = sources.match(/sources: *( *?\[.*?\])/);
                 if(sourcesRegex.length) {
                     sources = sourcesRegex[1].replace(/(?<={|,)([a-zA-Z][a-zA-Z0-9]*)(?=:)'/, "");
-                    eval(`jsonSources = ${sources}`);
+                    let jsonSources = null;
+                    eval(`jsonSources = ${sources};`);;
                     if(jsonSources.length){
                         src = []
                         jsonSources.map(m => src.push(new MediaSource(getProp(m, "file"), getProp(m, "type"), getProp(m, "label"))));
                     }
-                }
+                }   
             } catch (e) {
                 console.log("Error while getting vuviphim.xyz media source");
             }

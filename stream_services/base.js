@@ -1,21 +1,15 @@
+import Cacheable from "../utils/cacheable.js";
 
-export default class StreamingService {
-	constructor(cacheManager, cachePrefix="") {
-		this.cacheManager =  cacheManager;
-        this.cachePrefix = cachePrefix;
+export default class StreamingService extends Cacheable{
+	constructor(cacheManager, cachePrefix="StreamingService", functions=["getMediaSource"]) {
+		super(cacheManager, cachePrefix, functions);
 
 	}
     
 	async getMediaSource(aux) {
-
+        throw "not implemenented";
 	}
 
-    _prefixifyData(data) {
-        return `${this.cachePrefix}_${data}`
-    }
-
-	useCache(cacheManager) {
-		this.cacheManager = cacheManager;
-	}
+   
 
 }

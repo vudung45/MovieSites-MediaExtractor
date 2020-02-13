@@ -18,10 +18,10 @@ const BASE_URL = "https://vuviphimmoi.com/xem-phim";
 class VuViPhimmoiMetadata extends SiteMediaMetadata  {
 
     constructor(cacheManager=null, cachePrefix="VuViPhimmoiMetadata") {
-        super(cacheManager);
+        super(cacheManager, cachePrefix);
     }
 
-    async _manual_getMediaMetadata(aux) {
+    async getMediaMetadata(aux) {
         /* 
          @param 
                 aux     {
