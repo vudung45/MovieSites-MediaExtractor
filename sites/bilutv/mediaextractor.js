@@ -65,7 +65,7 @@ export default class BiluTVMediaExtractor extends MediaExtractor {
                         try {
                             let streamLinks = await simpleGetLinkDriver({
                                 url: iframeSrc,
-                                key: urlObj.searchParams.get("key"), 
+                                key: urlObj.searchParams.has("key") ? urlObj.searchParams.get("key") : null, 
                                 origin: "https://bilutv.org/"
                             });
                             if(streamLinks)

@@ -50,7 +50,7 @@ async function getGuestHydraxResp(hydrax_slug, hydrax_key, origin, proxy=null, i
 
 class Hydrax extends StreamingService {
     constructor(cacheManager=null) {
-        super(cacheManager, "Hydrax", ["_getHydraxApiResp", "_gen_m3u8_smamuhh1metro"]);
+        super(cacheManager, "Hydrax", ["_gen_m3u8_smamuhh1metro","_getHydraxApiResp"]);
     }
 
     async _getProxy(){
@@ -69,45 +69,48 @@ class Hydrax extends StreamingService {
     }
 
     async _getHydraxApiResp(aux) {
-        let hydaxApiResp = null;
+        let hydraxApiResp = null;
         try {
             if("key" in aux && aux["key"])  // use vip API
-                hydaxApiResp = await getVipHydraxResp(aux["slug"], aux["key"], aux["origin"], await this._getProxy(), "includeOrigin" in aux ? aux["includeOrigin"] : false);
+                hydraxApiResp = await getVipHydraxResp(aux["slug"], aux["key"], aux["origin"], await this._getProxy(), "includeOrigin" in aux ? aux["includeOrigin"] : false);
             else  //use guest API
-                hydaxApiResp = await getGuestHydraxResp(aux["slug"], null, aux["origin"], await this._getProxy(), "includeOrigin" in aux ? aux["includeOrigin"] : false);
+                hydraxApiResp = await getGuestHydraxResp(aux["slug"], null, aux["origin"], await this._getProxy(), "includeOrigin" in aux ? aux["includeOrigin"] : false);
         } catch(e) {
             console.log(e);
             return null;
         }
-        return hydaxApiResp;
+
+        if(!hydraxApiResp || ("status" in hydraxApiResp && hydraxApiResp.status == false)) {
+            console.log(hydraxApiResp);
+            return null;
+        }
+       
+        return hydraxApiResp;
 
     }
 
     async getMediaSource(aux) {
-        let params = {
-            "cacheKey" : JSON.stringify(aux)+"_getHydraxApiResp",
-            ...aux
-        };
-        let hydaxApiResp = await this._getHydraxApiResp({
-            cacheKey : JSON.stringify(aux)+"_getHydraxApiResp",...aux
+        let hydraxApiResp = await this._getHydraxApiResp({
+            ...aux,
+            cacheKey : JSON.stringify(aux)+"_getHydraxApiResp"
         });
 
-        if(!hydaxApiResp)  
+        if(!hydraxApiResp)  
             return null;
 
         let medias = [];
         //process api response to genenerate m3u8 files
-        if("ping" in hydaxApiResp && hydaxApiResp["ping"].includes("smamuhh1metro")) { //schema for smauhh1metro
-            let url = null;
-            const keys = Object.keys(hydaxApiResp);
+        if("ping" in hydraxApiResp && hydraxApiResp["ping"].includes("smamuhh1metro")) { //schema for smauhh1metro
+            const keys = Object.keys(hydraxApiResp);
             for(const mediaType of keys){
                 // cache layer for m3u8 file
-                if(HYDRAX_SUPPORTED_MEDIA.has(key)) 
+                if(HYDRAX_SUPPORTED_MEDIA.has(mediaType))  {
                     medias.push(new MediaSource(await this._gen_m3u8_smamuhh1metro({
-                        streamServer: hydaxApiResp["servers"]["stream"], 
-                        data: hydaxApiResp[key],
-                        cacheKey : JSON.stringify(aux)+`${mediaType}_${hydaxApiResp["servers"]["stream"]}`
-                    }), "m3u8", key));
+                        streamServer: hydraxApiResp["servers"]["stream"], 
+                        data: hydraxApiResp[mediaType],
+                        cacheKey : JSON.stringify(aux)+`${mediaType}_${hydraxApiResp["servers"]["stream"]}`
+                    }), "m3u8", mediaType));
+                }
             }
         } 
         return medias.length ? medias : null;
