@@ -26,12 +26,10 @@ const FAKE_HEADERS = {
 
 const AJAX_PLAYER_API = "https://bilutv.org/ajax/player/";
 
-export default class BiluTVMediaExtractor extends MediaExtractor {
-    constructor(movieID, episodeID) {
-        super(movieID, episodeID);
-    }
+export class BiluTVMediaExtractor extends MediaExtractor {
 
-    async extractMedias() {
+    async extractMedias(aux) {
+
         // parse the webpage source to extract movieID and episodeID
         let source = NUM_SOURCES;
         let medias = [];
@@ -39,42 +37,45 @@ export default class BiluTVMediaExtractor extends MediaExtractor {
         while (source-- > 0) {
             try {
                 //1st layer cache
-                let mediaMetadata = await MediaMetadata.getMediaMetadata({
-                    "movieID": this.movieID,
-                    "episodeID": this.episodeID,
+                let mediaMetadatas = await MediaMetadata.getMediaMetadata({
+                    "movieID": aux["movieID"],
+                    "episodeID": aux["episodeID"],
                     "sv": source
                 });
                 
-                if(!mediaMetadata)
+                if(!mediaMetadatas)
                     continue;
 
-                if(mediaMetadata.type == "video-sources") {
-                    let bundle = []
-                    mediaMetadata.data.map(m => {
-                        if(m["file"] != "error") 
-                            bundle.push(MediaSource.createFrom(m))
-                    });
-                    if(bundle.length)
-                         medias.push(bundle);
-                } else if(mediaMetadata.type == "iframe") {
-                    let iframeSrc = mediaMetadata.data;
-                    //2nd layer cache
-                    if(iframeSrc.includes("slug")) {
-                        let urlObj = new URL(iframeSrc);
-                        iframeSrc = genHydraxURL(urlObj.searchParams.get("slug"));
-                        try {
-                            let streamLinks = await simpleGetLinkDriver({
-                                url: iframeSrc,
-                                key: urlObj.searchParams.has("key") ? urlObj.searchParams.get("key") : null, 
-                                origin: "https://bilutv.org/"
-                            });
-                            if(streamLinks)
-                                medias = medias.concat(streamLinks);
-                        } catch (e) {
-                            console.log("Error extracting hydrax \n" +e)
+                for(let mediaMetadata of mediaMetadatas)
+                {
+                    if(mediaMetadata.type == "video-sources") {
+                        let bundle = []
+                        mediaMetadata.data.map(m => {
+                            if(m["file"] != "error") 
+                                bundle.push(MediaSource.createFrom(m))
+                        });
+                        if(bundle.length)
+                             medias.push(bundle);
+                    } else if(mediaMetadata.type == "iframe") {
+                        let iframeSrc = mediaMetadata.data;
+                        //2nd layer cache
+                        if(iframeSrc.includes("slug")) {
+                            let urlObj = new URL(iframeSrc);
+                            iframeSrc = genHydraxURL(urlObj.searchParams.get("slug"));
+                            try {
+                                let streamLinks = await simpleGetLinkDriver({
+                                    url: iframeSrc,
+                                    key: urlObj.searchParams.has("key") ? urlObj.searchParams.get("key") : null, 
+                                    origin: "https://bilutv.org/"
+                                });
+                                if(streamLinks)
+                                    medias = medias.concat(streamLinks);
+                            } catch (e) {
+                                console.log("Error extracting hydrax \n" +e)
+                            }
                         }
+                        medias.push([new MediaSource(iframeSrc, "iframe")]);
                     }
-                    medias.push([new MediaSource(iframeSrc, "iframe")]);
                 }
             } catch (e) {
                 console.log(`Error: ${e}`);
@@ -83,3 +84,4 @@ export default class BiluTVMediaExtractor extends MediaExtractor {
         return medias;
     }
 }
+module.exports = new BiluTVMediaExtractor();

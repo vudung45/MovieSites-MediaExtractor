@@ -50,19 +50,19 @@ class BiluTVMetadata extends SiteMediaMetadata  {
                 if (iframeUrl.charAt(0) == '/') // if the iframe source is a relative URL
                         iframeUrl = "https://bilutv.org" + iframeUrl;
 
-                return {
+                return [{
                     "type": "iframe",
                     "data": iframeUrl,
-                }
+                }]
             } else if (playerSrc.includes("<div class=\"player\">")) {
                 let sources = {}
                 // JSON.parse() doesn't always work because sometime their stupid script doesn't include quotation
                 eval(`sources = ${playerSrc.match(/sources:( *\[(.|\n)*?\])/)[1]}`);
                 if(sources.length > 0) {
-                    return {
+                    return [{
                         "type": "video-sources",
                         "data": sources
-                    }
+                    }]
                 }
             }
         } catch (e) {

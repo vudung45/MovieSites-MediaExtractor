@@ -5,8 +5,8 @@ import util from 'util'
 import  Promise from 'promise';
 
 export default class LocalJsonCacheManager extends CacheManager {
-    constructor(settings, ttl=3600, syncRoutine=true) {
-        super(settings,syncRoutine);
+    constructor(settings) {
+        super(settings);
 
     }
 
@@ -23,9 +23,14 @@ export default class LocalJsonCacheManager extends CacheManager {
     async load(key) {
         if(!(key in this.data)) 
             return null;
+
+        if(this.data[key].access + this.data[key].ttl < new Date().getTime()){
+            await this.delete(key);
+            return null;
+        }
         
         this.data[key].access = new Date().getTime();
-        this.syncLocalData(); // dont need to await
+        await this.syncLocalData(); // dont need to await
         return this.data[key].value;
     }
 
@@ -34,19 +39,19 @@ export default class LocalJsonCacheManager extends CacheManager {
             return;
 
         delete this.data[key]
-        this.syncLocalData();
+        await this.syncLocalData();
 
     }
 
     async update(key, value, ttl=null) {
-        if(ttl = null)
+        if(!ttl)
             ttl = this.ttl;
         this.data[key] = {
             access: new Date().getTime(),
             ttl: ttl * 1000,
             value: value
         }
-        this.syncLocalData();
+        await this.syncLocalData();
     }
 
     async syncLocalData(key) {

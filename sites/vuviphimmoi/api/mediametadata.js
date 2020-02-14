@@ -62,10 +62,10 @@ class VuViPhimmoiMetadata extends SiteMediaMetadata  {
             }
 
             if(directVideoSrcs) {
-                return {
+                return [{
                     "type": "video-sources",
                     "data": directVideoSrcs
-                }
+                }]
             }
             
             //try extracting through iframe instead
@@ -73,10 +73,10 @@ class VuViPhimmoiMetadata extends SiteMediaMetadata  {
             if(typeof iframeAttrs != "undefinied")
             {
                 let iframeURL = /src="(.*?)"/g.exec(iframeAttrs)[1];
-                return {
+                return [{
                     "type": "iframe",
                     "data": iframeURL
-                }
+                }]
             }
         } catch (e) {
             console.log(e);

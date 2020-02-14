@@ -16,41 +16,44 @@ import {simpleGetLinkDriver} from '../../stream_services/services.js';
 const BASE_URL = "https://vuviphimmoi.com/xem-phim";
 
 
-export default class VuViPhimMoi extends MediaExtractor {
-    constructor(movieID, episodeID) {
-        super(movieID, episodeID);
-    }
+export class VuViPhimMoi extends MediaExtractor {
 
-    async extractMedias() {
+
+    async extractMedias(aux) {
         //1st layer cache
-        let mediaMetadata = await MediaMetadata.getMediaMetadata({
-            "movieID": this.movieID,
-            "episodeID": this.episodeID
+        let mediaMetadatas = await MediaMetadata.getMediaMetadata({
+            "movieID": aux["movieID"],
+            "episodeID": aux["episodeID"]
         });
-        let medias = [];
-
-        if(!mediaMetadata)
-            return [];
+        let medias = []
         
-        if(mediaMetadata.type == "video-sources"){
-            let bundle = []
-            mediaMetadata.data.map(m => {
-                if(m["file"] != "error") 
-                    bundle.push(MediaSource.createFrom(m))
-            });
-            if(bundle.length)
-                medias.push(bundle);
-        }
-        else if(mediaMetadata.type == "iframe") {
-            let iframeSrc = mediaMetadata.data;
-            //2nd layer cache
-            let streamLinks = await simpleGetLinkDriver({
-                "url": iframeSrc
-            });
-            if(streamLinks)
-                medias = medias.concat(streamLinks);
-            medias.push([new MediaSource(iframeSrc, "iframe")]);
+        if(!mediaMetadatas)
+            return [];
+
+
+        for(let mediaMetadata of mediaMetadatas) {
+            if(mediaMetadata.type == "video-sources"){
+                let bundle = []
+                mediaMetadata.data.map(m => {
+                    if(m["file"] != "error") 
+                        bundle.push(MediaSource.createFrom(m))
+                });
+                if(bundle.length)
+                    medias.push(bundle);
+            }
+            else if(mediaMetadata.type == "iframe") {
+                let iframeSrc = mediaMetadata.data;
+                //2nd layer cache
+                let streamLinks = await simpleGetLinkDriver({
+                    "url": iframeSrc
+                });
+                if(streamLinks)
+                    medias = medias.concat(streamLinks);
+                medias.push([new MediaSource(iframeSrc, "iframe")]);
+            }
         }
         return medias;
     }
 }
+
+module.exports = new VuViPhimMoi();

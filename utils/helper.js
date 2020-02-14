@@ -1,8 +1,12 @@
 import fs from 'fs';
 import request from 'async-request';
+import _request from 'request';
 import PasteBin from './pastebin.js';
 
+import LocalPaste from './localpaste.js';
+
 exports.PasteBin = new PasteBin("7137609cc853d3db751dc643c35e2ce7"); //pastebin API
+exports.LocalPaste = new LocalPaste("./paste");
 
 export function extractHostname(url) {
     let hostname;
@@ -28,6 +32,26 @@ export function genHydraxURL(slug) {
 }
 
 
+export async function getRedirectLink(options){
+    return new Promise((resolve, reject) => {
+        try {
+            _request({
+                    ...options,
+                    followAllRedirects: false,
+                    followRedirect: false,
+                    resolveWithFullResponse: false,
+                    method: "HEAD",
+                }, function (err, res, body) {
+                    resolve(res.headers.location);
+                }
+            );
+        } catch (e) {
+            console.log(e);
+            resolve("uri" in options ? options["uri"] : options["url"]);
+        }
+    });
+}
+
 export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -50,7 +74,6 @@ export function moduleUseCache(modulePath, cacheManager, _import="default"){
     } catch (e) {
         console.log(e);
     }
-
 }
 
 export function getSupportedSites(packagePath){
@@ -85,7 +108,7 @@ export function getStreamServices(packagePath){
 
 
 function get_drive_id(text) {
-    m = text.match(new RegExp('/([A-Za-z0-9_-]+)\?e=download'));
+    let m = text.match(new RegExp('/([A-Za-z0-9_-]+)\?e=download'));
     if(m)
         return m[1]
     m = text.match(new RegExp('/files/([A-Za-z0-9_-]+)'));

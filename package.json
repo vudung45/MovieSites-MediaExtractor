@@ -5,7 +5,8 @@
     "scripts": {
         "test": "npm run build && node dist/tests.js",
         "clean": "rimraf dist/",
-        "build": "npm run clean && babel ./ --ignore node_modules/ --out-dir dist/ --copy-files"
+        "build": "npm run clean && babel ./ --ignore node_modules/ --out-dir dist/ --copy-files",
+        "start": "npm run build && node dist/webapp/webapp.js"
     },
     "author": "",
     "license": "MIT",
@@ -16,10 +17,13 @@
         "babel-preset-es2015-without-strict": "0.0.4",
         "cloudscraper": "^4.5.0",
         "express": "^4.17.1",
+        "form-data": "^3.0.0",
         "googleapis": "^39.2.0",
+        "node-fetch": "^2.6.0",
         "node-html-parser": "^1.1.19",
         "request-promise": "^4.2.5",
-        "rimraf": "^3.0.1"
+        "rimraf": "^3.0.1",
+        "uuid": "^3.4.0"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",

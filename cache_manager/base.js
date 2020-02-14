@@ -1,9 +1,11 @@
-
+import {getProp} from '../utils/helper.js'
 export default class CacheManager {
-    constructor(settings, ttl, syncRoutine)  {
-        this.settings=settings
+    constructor(settings)  {
+        this.settings=settings;
+        this.sync = getProp(settings, "syncRoutine", false);
+        this.ttl = getProp(settings, "ttl", 3600);
         this._processSettings();
-        if(syncRoutine)
+        if(this.sync)
             this.syncRoutine();
     }
 

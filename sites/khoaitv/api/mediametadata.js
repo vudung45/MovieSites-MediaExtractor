@@ -45,17 +45,17 @@ class KhoaiTVMetadata extends SiteMediaMetadata  {
             // check to see whether jwPlayer has video source or not
             if(typeof jwSettings.file != 'undefined' && jwSettings.file != "blank" && jwSettings.file != "error")
             {
-                return {
+                return [{
                     "type": "video-sources",
                     "data": [jwSettings]
-                }
+                }]
             } else {
                 // if no video source, then we'd have to go with the iframe path
                 let iframeSrc = urlResp.body.match(/iframe src="(.*?)"/)[0].replace('iframe src="','').replace('"','');
-                return {
+                return [{
                     "type": "iframe",
                     "data": iframeSrc
-                }
+                }]
             }
         } catch (e) {
             console.log(e);

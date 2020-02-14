@@ -50,7 +50,7 @@ async function getGuestHydraxResp(hydrax_slug, hydrax_key, origin, proxy=null, i
 
 class Hydrax extends StreamingService {
     constructor(cacheManager=null) {
-        super(cacheManager, "Hydrax", ["_gen_m3u8_smamuhh1metro","_getHydraxApiResp"]);
+        super(cacheManager, "Hydrax", ["_gen_m3u8_smamuhh1metro", "_getHydraxApiResp"]);
     }
 
     async _getProxy(){
@@ -71,6 +71,7 @@ class Hydrax extends StreamingService {
     async _getHydraxApiResp(aux) {
         let hydraxApiResp = null;
         try {
+            console.log("here");
             if("key" in aux && aux["key"])  // use vip API
                 hydraxApiResp = await getVipHydraxResp(aux["slug"], aux["key"], aux["origin"], await this._getProxy(), "includeOrigin" in aux ? aux["includeOrigin"] : false);
             else  //use guest API
@@ -105,11 +106,14 @@ class Hydrax extends StreamingService {
             for(const mediaType of keys){
                 // cache layer for m3u8 file
                 if(HYDRAX_SUPPORTED_MEDIA.has(mediaType))  {
-                    medias.push(new MediaSource(await this._gen_m3u8_smamuhh1metro({
-                        streamServer: hydraxApiResp["servers"]["stream"], 
-                        data: hydraxApiResp[mediaType],
-                        cacheKey : JSON.stringify(aux)+`${mediaType}_${hydraxApiResp["servers"]["stream"]}`
-                    }), "m3u8", mediaType));
+                    let m3u8Link = await this._gen_m3u8_smamuhh1metro({
+                            streamServer: hydraxApiResp["servers"]["stream"], 
+                            data: hydraxApiResp[mediaType],
+                            cacheKey : JSON.stringify(aux)+`${mediaType}_${hydraxApiResp["servers"]["stream"]}`
+                        });
+                    if(!m3u8Link)
+                        continue;
+                    medias.push(new MediaSource(m3u8Link, "hls", mediaType));
                 }
             }
         } 

@@ -1,4 +1,4 @@
-import request from 'async-request';
+import request from 'request-promise';
 
 
 export default class PasteBin {
@@ -8,9 +8,10 @@ export default class PasteBin {
 
    async createPaste(title, content,  expire='1440M', mode="0", returnRaw=true) {
         try {
-            apiResp = (await request("https://pastebin.com/api/api_post.php", {
+            let apiResp = (await request({
                     "method": "POST",
-                    "data": {
+                    "uri" : "https://pastebin.com/api/api_post.php",
+                    "form": {
                         "api_dev_key": this.apiKey,
                         "api_paste_code": content,
                         "api_option": "paste",
@@ -23,9 +24,9 @@ export default class PasteBin {
                      }
             }));
             if(!returnRaw)
-                return apiResp.body;
+                return apiResp;
             else 
-                return "https://pastebin.com/raw/"+apiResp.body.split("/").pop()
+                return "https://pastebin.com/raw/"+apiResp.split("/").pop()
         } catch (e) {
             console.log(e)
         }
