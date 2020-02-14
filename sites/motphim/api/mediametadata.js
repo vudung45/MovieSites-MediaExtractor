@@ -88,18 +88,6 @@ class MotphimMediadata extends SiteMediaMetadata  {
     }
 
     async getMediaMetadata(aux) {
-        /* 
-         @param 
-                aux     {
-                            "movieID"  : ...,
-                            "episodeID": ...
-                        }
-         @return
-                        {
-                            "type": ..., // video-sources, iframe
-                            "data" ...
-                        }
-        */
         //utilize cache
         let siteMetaData =  await this._parseMetadataFromSite(aux);
 

@@ -8,7 +8,7 @@ const HYDRAX_VIP_API = "https://multi.hydrax.net/vip";
 const HYDRAX_GUEST_API = "https://multi.hydrax.net/guest";
 const HYDRAX_SUPPORTED_MEDIA =  new Set(['fullhd', 'hd', 'mhd', 'sd', 'origin']);
 
-async function getHydraxResp(api, hydrax_slug, hydrax_key=null, origin, proxy=null, includeOrigin=false)
+async function getHydraxResp(api, hydrax_slug, hydrax_key=null, origin, proxy=null)
 {
     let headers = {
         'Referer': origin,
@@ -40,11 +40,11 @@ async function getHydraxResp(api, hydrax_slug, hydrax_key=null, origin, proxy=nu
     return apiResponse;
 }
 
-async function getVipHydraxResp(hydrax_slug, hydrax_key, origin, proxy=null, includeOrigin=false) {
+async function getVipHydraxResp(hydrax_slug, hydrax_key, origin, proxy=null) {
     return await getHydraxResp(HYDRAX_VIP_API, hydrax_slug, hydrax_key, origin, proxy, includeOrigin);
 }
 
-async function getGuestHydraxResp(hydrax_slug, hydrax_key, origin, proxy=null, includeOrigin=false) {
+async function getGuestHydraxResp(hydrax_slug, hydrax_key, origin, proxy=null) {
     return await getHydraxResp(HYDRAX_GUEST_API, hydrax_slug, hydrax_key, origin, proxy, includeOrigin);
 }
 
@@ -71,11 +71,10 @@ class Hydrax extends StreamingService {
     async _getHydraxApiResp(aux) {
         let hydraxApiResp = null;
         try {
-            console.log("here");
             if("key" in aux && aux["key"])  // use vip API
-                hydraxApiResp = await getVipHydraxResp(aux["slug"], aux["key"], aux["origin"], await this._getProxy(), "includeOrigin" in aux ? aux["includeOrigin"] : false);
+                hydraxApiResp = await getVipHydraxResp(aux["slug"], aux["key"], aux["origin"], await this._getProxy());
             else  //use guest API
-                hydraxApiResp = await getGuestHydraxResp(aux["slug"], null, aux["origin"], await this._getProxy(), "includeOrigin" in aux ? aux["includeOrigin"] : false);
+                hydraxApiResp = await getGuestHydraxResp(aux["slug"], null, aux["origin"], await this._getProxy());
         } catch(e) {
             console.log(e);
             return null;
@@ -87,7 +86,6 @@ class Hydrax extends StreamingService {
         }
        
         return hydraxApiResp;
-
     }
 
     async getMediaSource(aux) {

@@ -56,13 +56,16 @@ export default class LocalJsonCacheManager extends CacheManager {
 
     async syncLocalData(key) {
         /* sync in memory data with remote cache */
-        try {
-            fs.writeFile(this.settings["path"], JSON.stringify(this.data), function () {
-                    return new Promise(() => {});
-            });
-        } catch(e) {
-            console.log(e);
-        }
+        return new Promise((resolve, reject) => {
+            try {
+                fs.writeFile(this.settings["path"], JSON.stringify(this.data), function () {
+                       resolve();
+                });
+            } catch(e) {
+                console.log(e);
+                resolve();
+            }
+        });
     }
 
     async syncRoutine() {
@@ -79,7 +82,7 @@ export default class LocalJsonCacheManager extends CacheManager {
                 }
             });
             if(needUpdate)
-                await syncLocalData();
+                await this.syncLocalData();
             await sleep(1000);
         }
 
