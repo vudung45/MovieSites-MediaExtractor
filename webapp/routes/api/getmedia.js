@@ -67,6 +67,8 @@ async function driver(url) {
             console.log(e);
             throw "Error while getting media sources for " + url;
         }
+    } else {
+        throw url+" is currently not supported!";
     }
     return mediaSources;
 }
@@ -78,7 +80,6 @@ router.get("/", async (req, res) => {
             let url = req.query.url;
             let mediaSources = await driver(url);
             let mediaSourcesJson = [];
-
             mediaSources.forEach(m => {
                 let l = [];
                 m.forEach(s => {
