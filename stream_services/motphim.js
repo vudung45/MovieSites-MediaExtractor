@@ -44,7 +44,6 @@ class MotphimStream extends StreamingService {
 
   
     async _getApiResp(aux){
-
         let apiResp = await fetch(API, {
             "headers": FAKE_HEADERS,
             "method": "POST",

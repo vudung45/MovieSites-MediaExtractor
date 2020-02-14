@@ -60,8 +60,8 @@ class MotphimMediadata extends SiteMediaMetadata  {
                 body:  `x_dataLink=${aux.dataLink}&x_subTitle=&x_eId=${aux.eId}&x_vId=${aux.vId}&x_slug=${aux.slug}`,
                 method: "POST"
             }).then(r => r.json());
-            if(apiResp.status != 1)
-                throw "Invalid Resp.\n"+apiResp;
+            if(!apiResp.status)
+                throw "Invalid Resp.\n"+JSON.stringify(apiResp);
 
             for(const item of Object.keys(apiResp["playlist"])) {
                 apiResp["playlist"][item].forEach(f => {
