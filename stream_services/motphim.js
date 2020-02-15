@@ -21,6 +21,7 @@ const FAKE_HEADERS = {
 const AESKEY = "motphim.net45904818772018";
 
 const API = "https://iapi.motphim.org/cloud/"
+
 class MotphimStream extends StreamingService {
     constructor(cacheManager=null) {
         super(cacheManager, "Motphim", ["_getApiResp", "_gen_m3u8"]);

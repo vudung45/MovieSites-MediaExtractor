@@ -20,7 +20,7 @@ const MOTPHIM_MIRROR_LINK_API = "https://iapi.motphim.org/"
 class MotphimMediadata extends SiteMediaMetadata  {
 
     constructor(cacheManager=null, cachePrefix="MotphimMediadata") {
-        super(cacheManager, cachePrefix, ["_parseMetadataFromSite", "_fetchApi", "getMediaMetadata"]);
+        super(cacheManager, cachePrefix, ["_parseMetadataFromSite", "_fetchApi"]);
     }
 
     async _parseMetadataFromSite(aux) {
@@ -100,6 +100,8 @@ class MotphimMediadata extends SiteMediaMetadata  {
 
         if(!apiResp)
             return null;
+
+        console.log(apiResp);
 
         metadatas = []
 
