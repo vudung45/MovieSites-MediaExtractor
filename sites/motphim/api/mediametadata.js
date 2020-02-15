@@ -2,7 +2,6 @@ import SiteMediaMetadata from '../../base/api/base_mediametadata.js';
 import aes from '../../../utils/aes.js';
 import {AESConfig} from '../config.js'
 import request from 'request-promise';
-import fetch from 'node-fetch';
 
 const FAKE_HEADERS = {
         "Content-type" : "application/x-www-form-urlencoded; charset=UTF-8",
@@ -32,7 +31,7 @@ class MotphimMediadata extends SiteMediaMetadata  {
                         url: `${MOTPHIM_BASE_URL}-${aux["movieID"]}_${aux["episodeID"]}.html`,
                         method: "GET",
                         headers: FAKE_HEADERS
-                });
+            });
 
             let dataLink = `${urlResp.match(/var dataLink *?= *?"(.*?)"/)[1]}`;
             let vId = `${urlResp.match(/var vId *?= *?"(.*?)"/)[1]}`;
@@ -54,12 +53,12 @@ class MotphimMediadata extends SiteMediaMetadata  {
     async _fetchApi(aux) {
         let apiResp = null;
         try {
-            
-            apiResp = await fetch(MOTPHIM_API, {
+            apiResp = JSON.parse(await request({
+                uri: MOTPHIM_API,
                 headers: FAKE_HEADERS,
                 body:  `x_dataLink=${aux.dataLink}&x_subTitle=&x_eId=${aux.eId}&x_vId=${aux.vId}&x_slug=${aux.slug}`,
                 method: "POST"
-            }).then(r => r.json());
+            }));
             if(!apiResp.status)
                 throw "Invalid Resp.\n"+JSON.stringify(apiResp);
 
@@ -100,9 +99,7 @@ class MotphimMediadata extends SiteMediaMetadata  {
 
         if(!apiResp)
             return null;
-
-        console.log(apiResp);
-
+        
         metadatas = []
 
         if(apiResp["mirror_link"])
@@ -119,8 +116,7 @@ class MotphimMediadata extends SiteMediaMetadata  {
                 });
             }
         }
-        
-
+    
 
         return metadatas;
     }

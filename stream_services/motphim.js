@@ -4,7 +4,7 @@ import path from 'path';
 import MediaSource from '../utils/mediasource.js';
 import {gen_m3u8} from '../utils/hls.js';
 import {extractHostName} from '../utils/helper.js';
-import fetch from 'node-fetch';
+import request from 'request-promise';
 
 
 
@@ -30,11 +30,12 @@ class MotphimStream extends StreamingService {
 
     async _gen_m3u8(aux){
         let pasteLink = null;
-        let pasteContent = await fetch(aux["src"], {
-            "headers": FAKE_HEADERS
-        }).then(r => r.text());
         
         try {
+            let pasteContent = await request({
+                     "uri": aux["src"],
+                     "headers": FAKE_HEADERS
+            });
             pasteLink = await gen_m3u8(pasteContent,"https://motphim.org");
         } catch (e) {
             console.log(e);
@@ -45,16 +46,19 @@ class MotphimStream extends StreamingService {
 
   
     async _getApiResp(aux){
-        let apiResp = await fetch(API, {
-            "headers": FAKE_HEADERS,
-            "method": "POST",
-            "body": "d="+aux["d"]
-        }).then(r => r.json()).catch(e => {
-            console.log(e);
-            return e;
-        });
+        let apiResp = null;
+        try {
+            apiResp = JSON.parse(await request({
+                "uri": ,
+                "headers": FAKE_HEADERS,
+                "method": "POST",
+                "body": "d="+aux["d"]
+            }));
+        } catch (e) {
+            console.log("MotphimStream._getApiResp(). Failed to fetch api: "+e);
+        }
 
-        if("d" in apiResp) {
+        if(apiResp && "d" in apiResp) {
             try {
                 apiResp["d"] = aes.dec(apiResp["d"], AESKEY);
             } catch (e) {
@@ -62,7 +66,7 @@ class MotphimStream extends StreamingService {
             }
             return apiResp;
         }
-
+       
         return null;
 
     }
