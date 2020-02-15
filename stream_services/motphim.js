@@ -23,7 +23,7 @@ const AESKEY = "motphim.net45904818772018";
 const API = "https://iapi.motphim.org/cloud/"
 class MotphimStream extends StreamingService {
     constructor(cacheManager=null) {
-        super(cacheManager, "Hydrax", ["_getApiResp", "_gen_m3u8"]);
+        super(cacheManager, "Motphim", ["_getApiResp", "_gen_m3u8"]);
     }
 
 
@@ -74,7 +74,7 @@ class MotphimStream extends StreamingService {
             "cacheKey": aux["d"] // cache based on unique "d" metadata
         });
         if(!m3u8Paste)
-            m3u8Paste = apiResp["d"]; // if fails to get paste, then just use the provided
+            m3u8Paste = apiResp["d"]; // if fails to get paste, then just use the one provided
         medias.push(new MediaSource(m3u8Paste, "hls", null));
         return medias;
     }
