@@ -53,9 +53,6 @@ class Hydrax extends StreamingService {
         super(cacheManager, "Hydrax", ["_gen_m3u8_smamuhh1metro", "_getHydraxApiResp"]);
     }
 
-    async _getProxy(){
-        return null;
-    }
 
     async _gen_m3u8_smamuhh1metro(aux) {
         let m3u8Link = null;

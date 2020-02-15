@@ -8,9 +8,10 @@ export default class Cacheable {
             let toWrap = this[f];
             this[`_manual_${f}`] = toWrap;
             this[f] = async function(aux) {
-                let cacheKey = this._prefixifyData(aux["cacheKey"]);
-                if (!("cacheKey" in aux))
-                    cacheKey = this._prefixifyData(JSON.stringify(aux)+`_${f}`);
+                let cacheKey = this._prefixifyData(JSON.stringify(aux)+`_${f}`);
+                if (("cacheKey" in aux))
+                    cacheKey = this._prefixifyData(aux["cacheKey"]);
+
                 let data = null;
                 if(this.cacheManager)
                     data = await this.cacheManager.load(cacheKey);

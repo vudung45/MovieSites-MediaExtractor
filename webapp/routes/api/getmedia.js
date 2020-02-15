@@ -1,14 +1,25 @@
 import express from "express";
-import {
-    setupLocalCache
-} from "../../../utils/localcachesetup.js"
+import { setupLocalCache } from "../../../utils/localcachesetup.js"
+import MotphimStream from "../../../stream_services/motphim.js"
+import LocalJsonCacheManager from "../../../cache_manager/localjsoncache.js"
+import DIDSoftProxy from "../../../proxy_services/didproxy.js"
 import KhoaiTVMediaExtractor from "../../../sites/khoaitv/mediaextractor.js";
 import BiluTVMediaExtractor from "../../../sites/bilutv/mediaextractor.js";
 import VuViPhimmoiMediaExtractor from "../../../sites/vuviphimmoi/mediaextractor.js";
 import MotphimMediaExtrator from "../../../sites/motphim/mediaextractor.js";
 
 
+let proxyCache = new LocalJsonCacheManager({
+    "path": "./cache_files/proxy.cache",
+    "ttl": 3600, // rescan every hour
+    "syncRoutine": true,
+});
 
+DIDSoftProxy.useCache(proxyCache);
+MotphimStream.useProxyManager(DIDSoftProxy);
+
+
+// Setup cache for MediaExtractors, and StreamServices
 setupLocalCache(); //setup localcache
 
 const router = express.Router();

@@ -27,16 +27,25 @@ class MotphimStream extends StreamingService {
         super(cacheManager, "Motphim", ["_getApiResp", "_gen_m3u8"]);
     }
 
+    async _getProxy() {
+        if(this.proxyManager)
+            return await this.proxyManager.getProxy({
+            });
+        
+        return null;
+    }
+
 
     async _gen_m3u8(aux){
         let pasteLink = null;
         
         try {
-            let pasteContent = await request({
+            let r = request.defaults({proxy: "http://177.54.200.2:57992"});
+            let pasteContent = await r({
                      "uri": aux["src"],
                      "headers": FAKE_HEADERS
             });
-            pasteLink = await gen_m3u8(pasteContent,"https://motphim.org");
+            pasteLink = await gen_m3u8(pasteContent, "https://motphim.org");
         } catch (e) {
             console.log(e);
         }
@@ -48,8 +57,9 @@ class MotphimStream extends StreamingService {
     async _getApiResp(aux){
         let apiResp = null;
         try {
-            apiResp = JSON.parse(await request({
-                "uri": ,
+            let r = request.defaults({proxy: "http://177.54.200.2:57992"});
+            apiResp = JSON.parse(await r({
+                "uri": API,
                 "headers": FAKE_HEADERS,
                 "method": "POST",
                 "body": "d="+aux["d"]
@@ -57,7 +67,6 @@ class MotphimStream extends StreamingService {
         } catch (e) {
             console.log("MotphimStream._getApiResp(). Failed to fetch api: "+e);
         }
-
         if(apiResp && "d" in apiResp) {
             try {
                 apiResp["d"] = aes.dec(apiResp["d"], AESKEY);
@@ -74,6 +83,9 @@ class MotphimStream extends StreamingService {
     async getMediaSource(aux) {
         let medias = []
         let apiResp = await this._getApiResp(aux);
+        if(!apiResp)
+            return null;
+
         let m3u8Paste = await this._gen_m3u8({
             "src": apiResp["d"],
             "cacheKey": aux["d"] // cache based on unique "d" metadata
