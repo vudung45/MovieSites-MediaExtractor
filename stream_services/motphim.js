@@ -30,6 +30,7 @@ class MotphimStream extends StreamingService {
     async _getProxy() {
         if(this.proxyManager)
             return await this.proxyManager.getProxy({
+                "urlPath" : ""
             });
         
         return null;
@@ -40,10 +41,10 @@ class MotphimStream extends StreamingService {
         let pasteLink = null;
         
         try {
-            let r = request.defaults({proxy: "http://177.54.200.2:57992"});
-            let pasteContent = await r({
+            let pasteContent = await request({
                      "uri": aux["src"],
-                     "headers": FAKE_HEADERS
+                     "headers": FAKE_HEADERS,
+                     "proxy": await this._getProxy()
             });
             pasteLink = await gen_m3u8(pasteContent, "https://motphim.org");
         } catch (e) {
@@ -57,12 +58,12 @@ class MotphimStream extends StreamingService {
     async _getApiResp(aux){
         let apiResp = null;
         try {
-            let r = request.defaults({proxy: "http://177.54.200.2:57992"});
-            apiResp = JSON.parse(await r({
+            apiResp = JSON.parse(await request({
                 "uri": API,
                 "headers": FAKE_HEADERS,
                 "method": "POST",
-                "body": "d="+aux["d"]
+                "body": "d="+aux["d"],
+                "proxy": await this._getProxy()
             }));
         } catch (e) {
             console.log("MotphimStream._getApiResp(). Failed to fetch api: "+e);

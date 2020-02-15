@@ -9,14 +9,14 @@ import VuViPhimmoiMediaExtractor from "../../../sites/vuviphimmoi/mediaextractor
 import MotphimMediaExtrator from "../../../sites/motphim/mediaextractor.js";
 
 
-let proxyCache = new LocalJsonCacheManager({
-    "path": "./cache_files/proxy.cache",
-    "ttl": 3600, // rescan every hour
-    "syncRoutine": true,
-});
+// let proxyCache = new LocalJsonCacheManager({
+//     "path": "./cache_files/proxy.cache",
+//     "ttl": 3600, // rescan every hour
+//     "syncRoutine": true,
+// });
 
-DIDSoftProxy.useCache(proxyCache);
-MotphimStream.useProxyManager(DIDSoftProxy);
+// //DIDSoftProxy.useCache(proxyCache);
+// //MotphimStream.useProxyManager(DIDSoftProxy);
 
 
 // Setup cache for MediaExtractors, and StreamServices
