@@ -108,10 +108,11 @@ export function getStreamServices(packagePath){
 
 
 function get_drive_id(text) {
-    console.log(text)
     let m = text.match(new RegExp('([A-Za-z0-9_-]+)\?e=download'));
-    if(m)
+    if(m){
+        console.log(m);
         return m[1]
+    }
     m = text.match(new RegExp('/files/([A-Za-z0-9_-]+)'));
     if(m)
         return m[1]
