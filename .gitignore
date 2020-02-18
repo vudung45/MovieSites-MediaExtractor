@@ -2,5 +2,5 @@ node_modules
 dist
 package-lock.json
 *.cache
-paste/*
-cache_files/*
+paste/*.m3u8
+cache_files/*.cache
