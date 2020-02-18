@@ -33,7 +33,7 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
     })));
     let jointAwait = await Promise.all(jointAsync);
     let chunksUrls = [];
-    jointAwait.forEach(m => chunksUrls.push(atob(JSON.parse(m.body)["url"])));
+    jointAwait.forEach(m => chunksUrls.push(atob(JSON.parse(m)["url"])));
     for (let t = 0; t < d.length; ++t) {
         let f = chunksUrls[t];
         for (let p = 0; p < d[t].length; ++p) {
