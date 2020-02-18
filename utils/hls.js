@@ -27,7 +27,7 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
             "uri": `https://${streamServer}/html/${data['sig']}/${data['id']}/${id}/0.html?domain=hydrax.net`,
             "headers": {
                 "Content-Type": "application/json",
-                "Origin": "https://hydrax.net",
+                "Origin": "https://hydrax.net/",
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
             },
             "method": "GET"
@@ -35,6 +35,7 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
         let jointAwait = await Promise.all(jointAsync);
         let chunksUrls = [];
         jointAwait.forEach(m => {
+            console.log(m);
             if(!(m && "url" in JSON.parse(m))){
                 throw "Something went wrong wile generating m3u8 file for hydrax";
             }
