@@ -47,6 +47,11 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
             for (let p = 0; p < d[t].length; ++p) {
                 txt += `#EXTINF:${data['extinfs'][s]},\n`
                 txt += `#EXT-X-BYTERANGE:${d[t][p]}\n`
+                let link = driveLink ? get_drive_link(f) : f;
+
+                if(!link)
+                    throw "Failed to chunk url (convert to drinkLink: "+ driveLink+"): " + f;
+                
                 txt += `${driveLink ? get_drive_link(f) : f}\n`
                 s += 1
             }
