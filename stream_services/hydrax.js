@@ -107,15 +107,17 @@ class Hydrax extends StreamingService {
         let medias = [];
         //process api response to genenerate m3u8 files
         if("ping" in hydraxApiResp && hydraxApiResp["ping"].includes("smamuhh1metro")) { //schema for smauhh1metro
-            console.log(hydraxApiResp);
+            let server = "stream" in hydraxApiResp["servers"] ? hydraxApiResp["servers"]["stream"] : hydraxApiResp["servers"][0];
+            if(!server)
+                throw "No server found in: \n"+JSON.stringify(hydraxApiResp);
             const keys = Object.keys(hydraxApiResp);
             for(const mediaType of keys){
                 // cache layer for m3u8 file
                 if(HYDRAX_SUPPORTED_MEDIA.has(mediaType))  {
                     let m3u8Link = await this._gen_m3u8_smamuhh1metro({
-                            streamServer: hydraxApiResp["servers"]["stream"], 
+                            streamServer: server, 
                             data: hydraxApiResp[mediaType],
-                            cacheKey : JSON.stringify(aux)+`${mediaType}_${hydraxApiResp["servers"]["stream"]}`
+                            cacheKey : JSON.stringify(aux)+`${mediaType}_${server}`
                         });
                     if(!m3u8Link)
                         continue;
