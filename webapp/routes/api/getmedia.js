@@ -78,6 +78,24 @@ async function driver(url) {
             console.log(e);
             throw "Error while getting media sources for " + url;
         }
+    } else if (url.includes("khoaitv")) {
+        let regexMatch = url.match(/.*-(\d*)-tap-(\d*)$/);
+        if (!regexMatch) {
+            throw `Invalid khoaitv url format: ${url}`;
+        }
+
+        let movieId = regexMatch[1];
+        console.log(regexMatch);
+        let episodeId = regexMatch[2];
+        try {
+            mediaSources = await KhoaiTVMediaExtractor.extractMedias({
+                movieID: movieId,
+                episodeID: episodeId
+            });
+        } catch (e) {
+            console.log(e);
+            throw "Error while getting media sources for " + url;
+        }
     } else {
         throw url+" is currently not supported!";
     }
