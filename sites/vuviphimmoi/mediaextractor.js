@@ -19,13 +19,14 @@ const BASE_URL = "https://vuviphimmoi.com/xem-phim";
 export class VuViPhimMoi extends MediaExtractor {
 
 
-    async extractMedias(aux) {
+    async _extractMedias(aux) {
         //1st layer cache
         let mediaMetadatas = await MediaMetadata.getMediaMetadata({
             "movieID": aux["movieID"],
             "episodeID": aux["episodeID"]
         });
-        let medias = []
+        let medias = {"direct": [],
+                      "iframe": []}
         
         if(!mediaMetadatas)
             return [];
@@ -38,18 +39,19 @@ export class VuViPhimMoi extends MediaExtractor {
                     if(m["file"] != "error") 
                         bundle.push(MediaSource.createFrom(m))
                 });
-                if(bundle.length)
-                    medias.push(bundle);
+                medias["direct"].push(bundle); // direct video source
             }
             else if(mediaMetadata.type == "iframe") {
+                let bundle = []
                 let iframeSrc = mediaMetadata.data;
                 //2nd layer cache
                 let streamLinks = await simpleGetLinkDriver({
                     "url": iframeSrc
                 });
                 if(streamLinks)
-                    medias = medias.concat(streamLinks);
-                medias.push([new MediaSource(iframeSrc, "iframe")]);
+                    medias[iframeSrc]  = streamLinks;
+
+                medias["iframe"].push([new MediaSource(iframeSrc, "iframe")]);
             }
         }
         return medias;

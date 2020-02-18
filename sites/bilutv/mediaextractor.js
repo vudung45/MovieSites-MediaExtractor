@@ -28,11 +28,12 @@ const AJAX_PLAYER_API = "https://bilutv.org/ajax/player/";
 
 export class BiluTVMediaExtractor extends MediaExtractor {
 
-    async extractMedias(aux) {
+    async _extractMedias(aux) {
 
         // parse the webpage source to extract movieID and episodeID
         let source = NUM_SOURCES;
-        let medias = [];
+        let medias = {"direct" : [],
+                      "iframe" : []}
         //iterate through each alternative media sources, and attempt to crawl video source
         while (source-- > 0) {
             try {
@@ -48,14 +49,14 @@ export class BiluTVMediaExtractor extends MediaExtractor {
 
                 for(let mediaMetadata of mediaMetadatas)
                 {
+                    let bundle = []
                     if(mediaMetadata.type == "video-sources") {
-                        let bundle = []
                         mediaMetadata.data.map(m => {
                             if(m["file"] != "error") 
                                 bundle.push(MediaSource.createFrom(m))
                         });
-                        if(bundle.length)
-                             medias.push(bundle);
+                        if(bundle.length)    
+                            medias["direct"].push(bundle);
                     } else if(mediaMetadata.type == "iframe") {
                         let iframeSrc = mediaMetadata.data;
                         //2nd layer cache
@@ -69,12 +70,14 @@ export class BiluTVMediaExtractor extends MediaExtractor {
                                     origin: "https://bilutv.org/"
                                 });
                                 if(streamLinks)
-                                    medias = medias.concat(streamLinks);
+                                    medias[iframeSrc] = streamLinks;
+
                             } catch (e) {
                                 console.log("Error extracting hydrax \n" +e)
                             }
                         }
-                        medias.push([new MediaSource(iframeSrc, "iframe")]);
+
+                        medias["iframe"].push([new MediaSource(iframeSrc, "iframe")]);
                     }
                 }
             } catch (e) {

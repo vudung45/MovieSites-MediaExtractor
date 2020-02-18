@@ -91,7 +91,7 @@ class MotphimStream extends StreamingService {
         });
         if(!m3u8Paste)
             m3u8Paste = apiResp["d"]; // if fails to get paste, then just use the one provided
-        medias.push(new MediaSource(m3u8Paste, "hls", null));
+        medias.push(new MediaSource(m3u8Paste, "hls", null, true, ));
         return medias;
     }
 }

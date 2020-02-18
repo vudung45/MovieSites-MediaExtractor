@@ -90,21 +90,12 @@ router.get("/", async (req, res) => {
         if (req.query.url) {
             let url = req.query.url;
             let mediaSources = await driver(url);
-            let mediaSourcesJson = [];
-            mediaSources.forEach(m => {
-                let l = [];
-                m.forEach(s => {
-                    let mediaJson = s.getJson();
-                    if (mediaJson.file.includes("LOCAL_DIR"))
-                        mediaJson.file = mediaJson.file.replace("LOCAL_DIR", req.get('host') + "/pastes");
-                    l.push(mediaJson);
-                });
-                mediaSourcesJson.push(l);
-            });
+            // kinda a hack to replace LOCAL_DIR with current domain :)
+            mediaSources = JSON.parse(JSON.stringify(mediaSources).replace(/LOCAL_DIR/g, req.headers.host+"/pastes"));
 
             res.json({
                 status: 1,
-                sources: mediaSourcesJson
+                response: mediaSources
             });
         } else {
             throw "Missing param url"
