@@ -3,10 +3,10 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "test": "npm run build && node dist/tests.js",
+        "test": " npm run build && node dist/tests.js",
         "clean": "rimraf dist/",
         "build": "npm run clean && babel ./ --ignore node_modules/ --out-dir dist/ --copy-files",
-        "start": "npm run build && node dist/webapp/webapp.js"
+        "start": "rm -r ./paste/* && rm -r ./cache_files/* && npm run build && node dist/webapp/webapp.js"
     },
     "author": "",
     "license": "MIT",
