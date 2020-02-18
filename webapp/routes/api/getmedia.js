@@ -1,6 +1,6 @@
 import express from "express";
 import { setupLocalCache } from "../../../utils/localcachesetup.js"
-import MotphimStream from "../../../stream_services/motphim.js"
+import Hydrax from "../../../stream_services/hydrax.js"
 import LocalJsonCacheManager from "../../../cache_manager/localjsoncache.js"
 import DIDSoftProxy from "../../../proxy_services/didproxy.js"
 import KhoaiTVMediaExtractor from "../../../sites/khoaitv/mediaextractor.js";
@@ -15,8 +15,8 @@ import MotphimMediaExtrator from "../../../sites/motphim/mediaextractor.js";
 //     "syncRoutine": true,
 // });
 
-// //DIDSoftProxy.useCache(proxyCache);
-// //MotphimStream.useProxyManager(DIDSoftProxy);
+// DIDSoftProxy.useCache(proxyCache);
+// Hydrax.useProxyManager(DIDSoftProxy);
 
 
 // Setup cache for MediaExtractors, and StreamServices

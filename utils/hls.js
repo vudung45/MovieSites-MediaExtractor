@@ -1,4 +1,4 @@
-import request from 'async-request';
+import request from 'request-promise';
 import {
     extractHostname,
     LocalPaste,
@@ -22,7 +22,8 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
     let s = 0;
     let u = data['ids'];
     let jointAsync = [];
-    data['ids'].forEach((id) => jointAsync.push(request(`https://${streamServer}/html/${data['sig']}/${data['id']}/${id}/0.html?domain=hydrax.net`, {
+    data['ids'].forEach((id) => jointAsync.push(request({
+        "uri": `https://${streamServer}/html/${data['sig']}/${data['id']}/${id}/0.html?domain=hydrax.net`,
         "headers": {
             "Content-Type": "application/json",
             "Origin": "https://hydrax.net",

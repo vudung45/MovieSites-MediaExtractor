@@ -2,7 +2,7 @@ import StreamingService from './base.js';
 import {gen_m3u8_smamuhh1metro} from '../utils/hls.js';
 import path from 'path';
 import MediaSource from '../utils/mediasource.js';
-import request from 'async-request';
+import request from 'request-promise';
 
 const HYDRAX_VIP_API = "https://multi.hydrax.net/vip";
 const HYDRAX_GUEST_API = "https://multi.hydrax.net/guest";
@@ -13,6 +13,7 @@ async function getHydraxResp(api, hydrax_slug, hydrax_key=null, origin, proxy=nu
     let headers = {
         'Referer': origin,
         'Origin': origin,
+        'Content-Type': 'application/x-www-form-urlencoded',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
     };
 
@@ -29,28 +30,37 @@ async function getHydraxResp(api, hydrax_slug, hydrax_key=null, origin, proxy=nu
         };
     }
 
-    // POST to hyrax API
-    let apiResponse = JSON.parse((await request(api, {
+    let body = (await request({
+        "uri": api,
         "headers": headers, 
-        "data": data,
+        "form": data,
         "method": "POST",
         "proxy": proxy // possible IP ban
-    })).body);
+    }));
+    // POST to hyrax API
+    let apiResponse = JSON.parse(body);
  
     return apiResponse;
 }
 
 async function getVipHydraxResp(hydrax_slug, hydrax_key, origin, proxy=null) {
-    return await getHydraxResp(HYDRAX_VIP_API, hydrax_slug, hydrax_key, origin, proxy, includeOrigin);
+    return await getHydraxResp(HYDRAX_VIP_API, hydrax_slug, hydrax_key, origin, proxy);
 }
 
 async function getGuestHydraxResp(hydrax_slug, hydrax_key, origin, proxy=null) {
-    return await getHydraxResp(HYDRAX_GUEST_API, hydrax_slug, hydrax_key, origin, proxy, includeOrigin);
+    return await getHydraxResp(HYDRAX_GUEST_API, hydrax_slug, hydrax_key, origin, proxy);
 }
 
 class Hydrax extends StreamingService {
     constructor(cacheManager=null) {
         super(cacheManager, "Hydrax", ["_gen_m3u8_smamuhh1metro", "_getHydraxApiResp"]);
+    }
+
+    async _getProxy() {
+        if(this.proxyManager)
+            return await this.proxyManager.getProxy({});
+        
+        return null;
     }
 
 
@@ -73,7 +83,7 @@ class Hydrax extends StreamingService {
             else  //use guest API
                 hydraxApiResp = await getGuestHydraxResp(aux["slug"], null, aux["origin"], await this._getProxy());
         } catch(e) {
-            console.log(e);
+            console.log("Error calling HydraxAPI. Aux: "+JSON.stringify(aux));
             return null;
         }
 

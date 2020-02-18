@@ -29,9 +29,7 @@ class MotphimStream extends StreamingService {
 
     async _getProxy() {
         if(this.proxyManager)
-            return await this.proxyManager.getProxy({
-                "urlPath" : ""
-            });
+            return await this.proxyManager.getProxy();
         
         return null;
     }
@@ -44,7 +42,7 @@ class MotphimStream extends StreamingService {
             let pasteContent = await request({
                      "uri": aux["src"],
                      "headers": FAKE_HEADERS,
-                     "proxy": await this._getProxy()
+
             });
             pasteLink = await gen_m3u8(pasteContent, "https://motphim.org");
         } catch (e) {

@@ -1,5 +1,5 @@
 import MediaExtractor from '../base/base_mediaextractor.js'
-import request from 'async-request';
+import request from 'request-promise';
 import {
     parse
 } from 'node-html-parser';

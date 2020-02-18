@@ -6,8 +6,14 @@ export default class StreamingService extends Cacheable{
         this.proxyManager = null;
 
 	}
+    
 
-    async _getProxy(type="any"){
+    async _getProxy() {
+        // if(this.proxyManager)
+        //     return await this.proxyManager.getProxy({
+                
+        //     });
+        
         return null;
     }
 

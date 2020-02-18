@@ -15,6 +15,7 @@ let hydraxCache = new LocalJsonCacheManager({
 
 (async function(){
 	console.log(await Hydrax.getMediaSource({
-		"slug": "2CJ_icSgl"
+		"slug": "EQ7bQhon0",
+        "origin": "https://hydrax.net"
 	}));
 })();

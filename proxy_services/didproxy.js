@@ -3,7 +3,7 @@ import request from "request-promise";
 import parse from "node-html-parser";
 
 
-const BASE_URL = "http://list.didsoft.com/get?email=davidvu98@gmail.com&pass=6w7zmm&pid=http1000&showcountry=no&https=yes"
+const BASE_URL = "http://list.didsoft.com/get?email=davidvu98@gmail.com&pass=6w7zmm&pid=http1000&http=yes&showcountry=no&level=1"
 
 const LEVEL_SWITCHER = {
     "Transparent": "low", // lowest
@@ -57,7 +57,7 @@ class DIDSoftProxy extends ProxyBase {
             return null;
         let proxy = proxiesList[Math.floor(Math.random() * proxiesList.length)];
         console.log(`${proxy["ip"]}:${proxy["port"]}`);
-        return `https://${proxy["ip"]}:${proxy["port"]}`; // pick a random one
+        return `http://${proxy["ip"]}:${proxy["port"]}`; // pick a random one
     }
 
 }

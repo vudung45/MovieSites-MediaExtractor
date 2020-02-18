@@ -1,5 +1,5 @@
 import SiteMediaMetadata from '../../base/api/base_mediametadata.js';
-import request from 'async-request';
+import request from 'request-promise';
 
 
 const AJAX_PLAYER_API = "https://bilutv.org/ajax/player/";
@@ -33,17 +33,17 @@ class BiluTVMetadata extends SiteMediaMetadata  {
                         }
         */
         try {
-            let playerSrc = (await request(AJAX_PLAYER_API, 
-            {
+            let playerSrc = (await request({
+                "uri": AJAX_PLAYER_API ,
                 "method": "POST",
                 "headers": FAKE_HEADERS,
-                "data" :
+                "form" :
                 {
                     "id": aux["movieID"],
                     "ep": aux["episodeID"],
                     "sv": aux["sv"],
-                },
-            })).body;
+                }
+            }));
             let response = {}
             if (playerSrc.includes("box-player")) {
                 let iframeUrl = playerSrc.match(/iframe .* src="(.*?)"/)[1];
