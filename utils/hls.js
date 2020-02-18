@@ -35,8 +35,9 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
         let jointAwait = await Promise.all(jointAsync);
         let chunksUrls = [];
         jointAwait.forEach(m => {
-            if(!(m && "url" in JSON.parse(m)))
+            if(!(m && "url" in JSON.parse(m))){
                 throw "Something went wrong wile generating m3u8 file for hydrax";
+            }
             chunksUrls.push(atob(JSON.parse(m)["url"]))
         });
 
