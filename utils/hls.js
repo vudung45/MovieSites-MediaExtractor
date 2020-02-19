@@ -60,8 +60,8 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
         return await pasteutil.createPaste("", txt);
     } catch (e) {
         console.log("Error generating m3u8 gen_m3u8_smamuhh1metro()");
-        return null;
     }
+    return null;
 }
 
 
