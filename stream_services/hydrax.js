@@ -84,7 +84,7 @@ class Hydrax extends StreamingService {
                 hydraxApiResp = await getGuestHydraxResp(aux["slug"], null, aux["origin"], await this._getProxy());
         } catch(e) {
             console.log("Error calling HydraxAPI. Aux: "+JSON.stringify(aux));
-            console.log(e);
+            //console.log(e);
             return null;
         }
 
