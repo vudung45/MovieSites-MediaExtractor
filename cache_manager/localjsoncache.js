@@ -1,8 +1,10 @@
 import CacheManager from './base.js'
 import fs from 'fs'
-import {sleep} from '../utils/helper.js'
+import {
+    sleep
+} from '../utils/helper.js'
 import util from 'util'
-import  Promise from 'promise';
+import Promise from 'promise';
 
 export default class LocalJsonCacheManager extends CacheManager {
     constructor(settings) {
@@ -10,32 +12,31 @@ export default class LocalJsonCacheManager extends CacheManager {
 
     }
 
-    _processSettings()
-    {
-        this.data = {} 
+    _processSettings() {
+        this.data = {}
         try {
-            this.data = JSON.parse(fs.readFileSync(this.settings["path"]));         
-        } catch(e) {
+            this.data = JSON.parse(fs.readFileSync(this.settings["path"]));
+        } catch (e) {
             console.log(e);
         }
     }
 
     async load(key) {
-        if(!(key in this.data)) 
+        if (!(key in this.data))
             return null;
 
-        if(this.data[key].access + this.data[key].ttl < new Date().getTime()){
+        if (this.data[key].access + this.data[key].ttl < new Date().getTime()) {
             await this.delete(key);
             return null;
         }
-        
+
         this.data[key].access = new Date().getTime();
         await this.syncLocalData(); // dont need to await
         return this.data[key].value;
     }
 
     async delete(key) {
-        if(!(key in this.data)) 
+        if (!(key in this.data))
             return;
 
         delete this.data[key]
@@ -43,8 +44,8 @@ export default class LocalJsonCacheManager extends CacheManager {
 
     }
 
-    async update(key, value, ttl=null) {
-        if(!ttl)
+    async update(key, value, ttl = null) {
+        if (!ttl)
             ttl = this.ttl;
         this.data[key] = {
             access: new Date().getTime(),
@@ -58,10 +59,10 @@ export default class LocalJsonCacheManager extends CacheManager {
         /* sync in memory data with remote cache */
         return new Promise((resolve, reject) => {
             try {
-                fs.writeFile(this.settings["path"], JSON.stringify(this.data), function () {
-                       resolve();
+                fs.writeFile(this.settings["path"], JSON.stringify(this.data), function() {
+                    resolve();
                 });
-            } catch(e) {
+            } catch (e) {
                 console.log(e);
                 resolve();
             }
@@ -69,19 +70,17 @@ export default class LocalJsonCacheManager extends CacheManager {
     }
 
     async syncRoutine() {
-        while(true)
-        {
+        while (true) {
             /* iterate through each key and delete expired TTL keys */
             let needUpdate = false;
-            Object.keys(this.data).map( k => {
-                if(this.data[k].ttl != null
-                    && this.data[k].ttl + this.data[k].access < new Date().getTime())
-                {
+            Object.keys(this.data).map(k => {
+                if (this.data[k].ttl != null &&
+                    this.data[k].ttl + this.data[k].access < new Date().getTime()) {
                     needUpdate = true;
                     delete this.data[k];
                 }
             });
-            if(needUpdate)
+            if (needUpdate)
                 await this.syncLocalData();
             await sleep(1000);
         }

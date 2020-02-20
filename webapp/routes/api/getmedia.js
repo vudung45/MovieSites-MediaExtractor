@@ -1,5 +1,7 @@
 import express from "express";
-import { setupLocalCache } from "../../../utils/localcachesetup.js"
+import {
+    setupLocalCache
+} from "../../../utils/localcachesetup.js"
 import Hydrax from "../../../stream_services/hydrax.js"
 import LocalJsonCacheManager from "../../../cache_manager/localjsoncache.js"
 import DIDSoftProxy from "../../../proxy_services/didproxy.js"
@@ -97,7 +99,7 @@ async function driver(url) {
             throw "Error while getting media sources for " + url;
         }
     } else {
-        throw url+" is currently not supported!";
+        throw url + " is currently not supported!";
     }
     return mediaSources;
 }
@@ -109,7 +111,7 @@ router.get("/", async (req, res) => {
             let url = req.query.url;
             let mediaSources = await driver(url);
             // kinda a hack to replace LOCAL_DIR with current domain :)
-            mediaSources = JSON.parse(JSON.stringify(mediaSources).replace(/LOCAL_DIR/g, req.headers.host+"/pastes"));
+            mediaSources = JSON.parse(JSON.stringify(mediaSources).replace(/LOCAL_DIR/g, req.headers.host + "/pastes"));
 
             res.json({
                 status: 1,

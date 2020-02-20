@@ -1,7 +1,6 @@
-
 import Cacheable from "../../../utils/cacheable.js"
 export default class SiteMediaMetadata extends Cacheable {
-    constructor(cacheManager=null, cachePrefix="BiluTVAPI", functions=["getMediaMetadata"]) {
+    constructor(cacheManager = null, cachePrefix = "BiluTVAPI", functions = ["getMediaMetadata"]) {
         super(cacheManager, cachePrefix, functions);
     }
 
@@ -10,5 +9,5 @@ export default class SiteMediaMetadata extends Cacheable {
         throw "not yet implemented";
     }
 
-    
+
 }

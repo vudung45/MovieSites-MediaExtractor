@@ -36,7 +36,7 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
         let chunksUrls = [];
         jointAwait.forEach(m => {
             //console.log(m);
-            if(!(m && "url" in JSON.parse(m))){
+            if (!(m && "url" in JSON.parse(m))) {
                 throw "Something went wrong wile generating m3u8 file for hydrax";
             }
             chunksUrls.push(atob(JSON.parse(m)["url"]))
@@ -49,9 +49,9 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
                 txt += `#EXT-X-BYTERANGE:${d[t][p]}\n`
                 let link = driveLink ? get_drive_link(f) : f;
 
-                if(!link)
-                    throw "Failed to chunk url (convert to drinkLink: "+ driveLink+"): " + f;
-                
+                if (!link)
+                    throw "Failed to chunk url (convert to drinkLink: " + driveLink + "): " + f;
+
                 txt += `${driveLink ? get_drive_link(f) : f}\n`
                 s += 1
             }
@@ -83,7 +83,7 @@ export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteut
                 let realUrls = await Promise.all(asyncTasks);
                 for (let i = 0; i < realUrls.length; ++i)
                     content = content.replace(urls[i], realUrls[i]);
-                
+
             }
             for (let i = 0; i < urls.length; ++i) {
                 if (urls[i].charAt(i) == '/')

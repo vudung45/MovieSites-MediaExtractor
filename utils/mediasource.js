@@ -1,7 +1,10 @@
-import {extractHostname, getProp} from './helper.js'
+import {
+    extractHostname,
+    getProp
+} from './helper.js'
 
 export default class MediaSource {
-    constructor(source, mediaType="iframe", label=null, permaLink=false) {
+    constructor(source, mediaType = "iframe", label = null, permaLink = false) {
         this.file = source;
         this.type = mediaType;
         this.label = label;
@@ -12,8 +15,7 @@ export default class MediaSource {
         return new MediaSource(getProp(json, "file"), getProp(json, "type"), getProp(json, "label"), getProp(json, "permaLink", false));
     }
 
-    getJson()
-    {
+    getJson() {
         return {
             "file": this.file,
             "type": this.type,

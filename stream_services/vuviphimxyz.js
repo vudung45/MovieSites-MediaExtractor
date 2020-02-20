@@ -1,17 +1,20 @@
 import StreamingService from './base.js';
 import request from 'async-request';
-import { getProp, unpackJS} from '../utils/helper.js';
+import {
+    getProp,
+    unpackJS
+} from '../utils/helper.js';
 import MediaSource from '../utils/mediasource.js'
 
 
 const BASE_URL = "https://vuviphimmoi.com/xem-phim";
 
 class VuViPhimStream extends StreamingService {
-    constructor(cacheManager=null) {
+    constructor(cacheManager = null) {
         super(cacheManager, "vuviphimxyz");
     }
 
-    async _getProxy(){
+    async _getProxy() {
         return null;
     }
 
@@ -24,7 +27,7 @@ class VuViPhimStream extends StreamingService {
         try {
             let urlResp = await request(url, {
                 headers: {
-                    "Content-type" : "application/x-www-form-urlencoded; charset=UTF-8",
+                    "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
                     "User-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36",
                     "Origin": origin,
                     "Referer": referer,
@@ -33,22 +36,22 @@ class VuViPhimStream extends StreamingService {
             });
             let sourcesRegex = urlResp.body.match(/(eval\(function\(p,a,c,k,e,d\).*?)\s+?<\/script>/);
             let sources = null;
-            if(sourcesRegex.length) {
+            if (sourcesRegex.length) {
                 sources = sourcesRegex[1];
                 sources = unpackJS(sources);
             } else {
                 sources = urlResp.body;
             }
             sourcesRegex = sources.match(/sources: *( *?\[.*?\])/);
-            if(sourcesRegex.length) {
+            if (sourcesRegex.length) {
                 sources = sourcesRegex[1].replace(/(?<={|,)([a-zA-Z][a-zA-Z0-9]*)(?=:)'/, "");
                 let jsonSources = null;
                 eval(`jsonSources = ${sources};`);;
-                if(jsonSources.length){
+                if (jsonSources.length) {
                     src = []
                     jsonSources.map(m => src.push(new MediaSource(getProp(m, "file"), getProp(m, "type"), getProp(m, "label"))));
                 }
-            }   
+            }
         } catch (e) {
             console.log("Error while getting vuviphim.xyz media source");
         }

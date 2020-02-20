@@ -15,7 +15,7 @@ app.use("/pastes", express.static("./paste"));
 
 // Get Movies
 app.get("/", async (req, res) => {
-    res.send('Hello World'); 
+    res.send('Hello World');
 });
 
 const port = process.env.PORT || 8080
