@@ -111,7 +111,7 @@ router.get("/", async (req, res) => {
             let url = req.query.url;
             let mediaSources = await driver(url);
             // kinda a hack to replace LOCAL_DIR with current domain :)
-            mediaSources = JSON.parse(JSON.stringify(mediaSources).replace(/LOCAL_DIR/g, req.headers.host + "/pastes"));
+            mediaSources = JSON.parse(JSON.stringify(mediaSources).replace(/LOCAL_DIR/g, "//"+ req.headers.host + "/pastes"));
 
             res.json({
                 status: 1,

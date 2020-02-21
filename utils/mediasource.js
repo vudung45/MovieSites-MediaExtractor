@@ -5,19 +5,20 @@ import {
 
 export default class MediaSource {
     constructor(source, mediaType = "iframe", label = null, permaLink = false) {
-        this.file = source;
+        this.src = source;
         this.type = mediaType;
         this.label = label;
         this.permaLink = permaLink;
     }
 
     static createFrom(json) {
-        return new MediaSource(getProp(json, "file"), getProp(json, "type"), getProp(json, "label"), getProp(json, "permaLink", false));
+        return new MediaSource(getProp(json, "file") ? getProp(json, "file") : getProp(json, "src"), 
+                    getProp(json, "type"), getProp(json, "label"), getProp(json, "permaLink", false));
     }
 
     getJson() {
         return {
-            "file": this.file,
+            "src": this.file,
             "type": this.type,
             "label": this.label,
         };
