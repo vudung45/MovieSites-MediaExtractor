@@ -11,10 +11,7 @@ import {
     getProp
 } from '../../utils/helper.js'
 import MediaMetadata from './api/mediametadata.js'
-import {
-    simpleGetLinkDriver
-} from '../../stream_services/services.js';
-
+import { simpleGetLinkDriver, MotphimStream } from '../../stream_services/services.js';
 
 const KHOAITV_BASE_PHIMURL = "http://khoaitv.org/phim/"
 export class MotphimMediaExtractor extends MediaExtractor {
@@ -37,10 +34,18 @@ export class MotphimMediaExtractor extends MediaExtractor {
         for (let mediaMetadata of mediaMetadatas) {
             if (mediaMetadata.type == "video-sources") {
                 let bundle = []
-                mediaMetadata.data.map(m => {
-                    if (m["file"] != "error")
-                        bundle.push(MediaSource.createFrom(m))
-                });
+                for(let m of mediaMetadata.data) {
+                    if (m["file"] == "error")
+                        continue;
+                    if(m["type"] == "hls"){
+                        let m3u8Paste = await MotphimStream._gen_m3u8({
+                            src : m["file"]
+                        });
+                        console.log(m3u8Paste);
+                        m["file"] = m3u8Paste;
+                    }
+                    bundle.push(MediaSource.createFrom(m))
+                }
                 medias["direct"].push(bundle); // direct video source
             } else if (mediaMetadata.type == "iframe") {
                 let bundle = []

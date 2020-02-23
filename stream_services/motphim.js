@@ -19,6 +19,7 @@ const FAKE_HEADERS = {
     "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36",
     "Origin": "https://motphim.net",
+    "Referer": "https://motphim.net",
     "Accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,vi;q=0.6",
 };
 
