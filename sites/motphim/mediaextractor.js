@@ -41,8 +41,10 @@ export class MotphimMediaExtractor extends MediaExtractor {
                         let m3u8Paste = await MotphimStream._gen_m3u8({
                             src : m["file"]
                         });
-                        console.log(m3u8Paste);
-                        m["file"] = m3u8Paste;
+                        if(m3u8Paste){
+                            m["file"] = m3u8Paste;
+                            m["permaLink"] = true;
+                        }
                     }
                     bundle.push(MediaSource.createFrom(m))
                 }
