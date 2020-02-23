@@ -71,9 +71,9 @@ export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteut
     try {
         let urlsMatches = [...content.matchAll(/#EXTINF:.*?,(?:\n#EXT-X-BYTERANGE:.*?)?\n(.*?)\n/)];
         let urls = []
-        console.log(urlsMatches);
         urlsMatches.forEach(m => urls.push(m[1]));
         if (urls.length) {
+            console
             for (let i = 0; i < urls.length; ++i) {
                 if (urls[i].substring(0,2) != "//" && urls[i].substring(0,4) != "http"){
                     if(urls[i].charAt(0) == "/")
@@ -96,6 +96,8 @@ export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteut
                         "Origin": origin
                     }
                 })));
+                console.log(urls);
+                console.log(asyncTasks.length);
                 let realUrls = await Promise.all(asyncTasks);
                 console.log(realUrls);
                 for (let i = 0; i < realUrls.length; ++i)
