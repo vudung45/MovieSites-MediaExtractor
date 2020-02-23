@@ -68,13 +68,13 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
 
 export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteutil = LocalPaste) {
     let content = m3u8Content;
+    console.log(content);
     try {
-        let urlsMatches = [...content.matchAll(/#EXTINF:.*?,(?:\n#EXT-X-BYTERANGE:.*?)?\n(.*?)\n/)];
+        let urlsMatches = [...content.matchAll(/#EXTINF:.*?,(?:\n#EXT-X-BYTERANGE:.*?)?(?: |\n)+(.*?)(?: |\n)+/)];
         let urls = urlsMatches.map(m => m[1]);
         console.log(urlsMatches.length);
         urlsMatches.forEach(m => urls.push(m[1]));
         if (urls.length) {
-            console.log(urls);
             for (let i = 0; i < urls.length; ++i) {
                 if (urls[i].substring(0,2) != "//" && urls[i].substring(0,4) != "http"){
                     if(urls[i].charAt(0) == "/")
@@ -98,7 +98,6 @@ export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteut
                     }
                 })));
                 console.log(urls);
-                console.log(asyncTasks.length);
                 let realUrls = await Promise.all(asyncTasks);
                 console.log(realUrls);
                 for (let i = 0; i < realUrls.length; ++i)
