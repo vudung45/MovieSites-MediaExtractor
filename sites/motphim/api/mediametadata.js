@@ -4,19 +4,41 @@ import {
     AESConfig
 } from '../config.js'
 import request from 'request-promise';
+import _request from 'request';
+import crypto from './EHYME.js'
+var tough = require('tough-cookie');
+
+var btoa = require('btoa');
 
 const FAKE_HEADERS = {
     "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
     "User-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36",
     "Origin": "https://motphim.net",
-    "Referrer": "https://motphim.net/",
+    "Referer": "https://motphim.net/xem-phim/khu-rung-bi-mat-tap-1-7705_97558.html",
     "Accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,vi;q=0.6",
 };
 
 
-const MOTPHIM_BASE_URL = "https://motphim.net/xem-phim/p"
-const MOTPHIM_API = "https://api.motphim.org/"
-const MOTPHIM_MIRROR_LINK_API = "https://iapi.motphim.org/"
+/* MOTPHIM APPROACHE TO ENCRYPT the CSRF lmao */
+function jquery_beauty(A, epi, t) {
+    let JQMP = require("./JQMP.js")
+    var w = "document.referrer";
+    var u = 500;
+    var v = "motphim.net";
+    var x = epi;
+    var y = crypto.EHYME(w, x, {
+        khoaCai: 4,
+        itenay: u
+    });
+    var z = JQMP.TUAMADAM(t);
+    return btoa(JQMP.AKHAMA.etulang(A, y, {
+        imame: z
+    }));
+}
+
+const MOTPHIM_BASE_URL = "https://motphim.net/xem-phim/p";
+const MOTPHIM_API = "https://api.motphim.net/";
+const MOTPHIM_CSRF_API = "https://dc.motphim.net/token";
 
 class MotphimMediadata extends SiteMediaMetadata {
 
@@ -38,13 +60,14 @@ class MotphimMediadata extends SiteMediaMetadata {
             let dataLink = `${urlResp.match(/var dataLink *?= *?"(.*?)"/)[1]}`;
             let vId = `${urlResp.match(/var vId *?= *?"(.*?)"/)[1]}`;
             let slug = `${urlResp.match(/var slug *?= *?"(.*?)"/)[1]}`;
-
+            let csrfToken = `${urlResp.match(/name="csrf-token" *content="(.*)">/)[1]}`
             metaData = {
                 "dataLink": dataLink,
                 "vId": vId,
                 "slug": slug,
                 "eId": aux["episodeID"],
-                "filmId": aux["movieID"]
+                "filmId": aux["movieID"],
+                "csrfToken": "QUcwZXVOUDhaMzFobHlvR3poMjJoZlBwUktiTGRoMkZzdmhwcnp0Vzlmaz0="
             }
         } catch (e) {
             console.log("MotphimMediadata._parseMetadataFromSite().\n" + e);
@@ -55,23 +78,53 @@ class MotphimMediadata extends SiteMediaMetadata {
     async _fetchApi(aux) {
         let apiResp = null;
         try {
+            console.log("BYPASS MOTPHIM CSRF...")
+            let keygen =  jquery_beauty(aux.csrfToken, aux.eId, "dung-getlink-nua-ban-oi");
+            let mkey = btoa(btoa(btoa(aux.eId)));
+
+            console.log({
+                keygen: keygen,
+                mkey: mkey,
+            })
+
+            let csrfRsp = await request({
+                uri: MOTPHIM_CSRF_API,
+                headers: {
+                    ...FAKE_HEADERS
+                },
+                form: {
+                    keygen: keygen,
+                    mkey: mkey
+                },
+                method: "POST"
+            });
+
+            console.log("__cfduld from server: "+csrfRsp)
+
+            // successfully bypassed..
+            let cookie = request.cookie("__cfduld="+csrfRsp);
             apiResp = JSON.parse(await request({
                 uri: MOTPHIM_API,
-                headers: FAKE_HEADERS,
-                body: `x_dataLink=${aux.dataLink}&x_subTitle=&x_eId=${aux.eId}&x_vId=${aux.vId}&x_slug=${aux.slug}`,
-
+                headers: {
+                    "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+                    "User-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.117 Safari/537.36",
+                    "Origin": "https://motphim.net",
+                    "Referer": `${MOTPHIM_BASE_URL}-${aux["filmId"]}_${aux["eId"]}.html`,
+                    "Accept-language": "en-US,en;q=0.9,zh-CN;q=0.8,zh;q=0.7,vi;q=0.6",
+                    "Cookie": cookie
+                },
+                body: `x_dataLink=${aux.dataLink}&x_eId=${aux.eId}&x_vId=${aux.vId}&x_slug=${aux.slug}`,
                 method: "POST"
             }));
+    
             if (!apiResp.status)
                 throw "Invalid Resp.\n" + JSON.stringify(apiResp);
-            console.log(apiResp)
-
+            
 
             //apiResp["playlist"] is somtimes an array or a dict
             let toDecrypt = Array.isArray(apiResp["playlist"]) ? [apiResp["playlist"]] : 
-                                                                  Object.keys(apiResp["playlist"]).map( k => {
-                                                                        apiResp["playlist"][k]
-                                                                    }) 
+                                                                Object.keys(apiResp["playlist"]).map( k => apiResp["playlist"][k]); 
+
             for (const item of toDecrypt) {
                 item.forEach(f => {
                     try {
@@ -100,7 +153,6 @@ class MotphimMediadata extends SiteMediaMetadata {
 
         //utilize cache
         let siteMetaData = await this._parseMetadataFromSite(aux);
-
         if (!siteMetaData)
             return null;
 
@@ -123,7 +175,7 @@ class MotphimMediadata extends SiteMediaMetadata {
                 for (const p of Object.keys(apiResp["playlist"])) {
                     metadatas.push({
                         "type": "video-sources",
-                        "data": p
+                        "data": apiResp["playlist"][p]
                     });
                 }
             } else {
@@ -133,7 +185,6 @@ class MotphimMediadata extends SiteMediaMetadata {
                 });
             }
         }
-
 
         return metadatas;
     }
