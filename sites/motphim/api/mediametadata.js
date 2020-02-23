@@ -64,9 +64,16 @@ class MotphimMediadata extends SiteMediaMetadata {
             }));
             if (!apiResp.status)
                 throw "Invalid Resp.\n" + JSON.stringify(apiResp);
+            console.log(apiResp)
 
-            for (const item of Object.keys(apiResp["playlist"])) {
-                apiResp["playlist"][item].forEach(f => {
+
+            //apiResp["playlist"] is somtimes an array or a dict
+            let toDecrypt = Array.isArray(apiResp["playlist"]) ? [apiResp["playlist"]] : 
+                                                                  Object.keys(apiResp["playlist"]).map( k => {
+                                                                        apiResp["playlist"][k]
+                                                                    }) 
+            for (const item of apiResp["playlist"]) {
+                item.forEach(f => {
                     try {
                         f.file = aes.dec(f.file, AESConfig.aesKey);
                     } catch (e) {
@@ -112,10 +119,17 @@ class MotphimMediadata extends SiteMediaMetadata {
             });
 
         if (apiResp["playlist"]) {
-            for (const p of Object.keys(apiResp["playlist"])) {
+            if(!Array.isArray(apiResp["playlist"])) {
+                for (const p of Object.keys(apiResp["playlist"])) {
+                    metadatas.push({
+                        "type": "video-sources",
+                        "data": p
+                    });
+                }
+            } else {
                 metadatas.push({
                     "type": "video-sources",
-                    "data": apiResp["playlist"][p]
+                    "data": apiResp["playlist"]
                 });
             }
         }

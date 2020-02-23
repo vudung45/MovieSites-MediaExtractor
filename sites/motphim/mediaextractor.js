@@ -33,7 +33,7 @@ export class MotphimMediaExtractor extends MediaExtractor {
         if (!mediaMetadatas)
             return [];
 
-
+        console.log(mediaMetadatas)
         for (let mediaMetadata of mediaMetadatas) {
             if (mediaMetadata.type == "video-sources") {
                 let bundle = []
