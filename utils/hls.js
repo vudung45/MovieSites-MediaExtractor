@@ -96,6 +96,7 @@ export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteut
                     }
                 })));
                 let realUrls = await Promise.all(asyncTasks);
+                console.log(realUrls);
                 for (let i = 0; i < realUrls.length; ++i)
                     content = content.replace(urls[i], realUrls[i]);
 
