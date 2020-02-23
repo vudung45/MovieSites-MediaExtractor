@@ -9,6 +9,7 @@ import {
 import Promise from 'promise';
 import atob from 'atob';
 import urljoin from "url-join";
+import fs from "fs";
 
 
 export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = true, pasteutil = LocalPaste) {
@@ -68,6 +69,7 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
 
 export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteutil = LocalPaste) {
     let content = m3u8Content;
+    fs.writeFile("./paste/save.m3u8", m3u8Content, (err) => {console.log(err)});
     console.log(content);
     try {
         let urlsMatches = [...content.matchAll(/#EXTINF:.*?,(?:\n#EXT-X-BYTERANGE:.*?)?(?: |\n)+(.*?)(?: |\n)+/)];
