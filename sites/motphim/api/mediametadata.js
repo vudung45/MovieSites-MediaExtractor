@@ -72,7 +72,7 @@ class MotphimMediadata extends SiteMediaMetadata {
                                                                   Object.keys(apiResp["playlist"]).map( k => {
                                                                         apiResp["playlist"][k]
                                                                     }) 
-            for (const item of apiResp["playlist"]) {
+            for (const item of toDecrypt) {
                 item.forEach(f => {
                     try {
                         f.file = aes.dec(f.file, AESConfig.aesKey);
