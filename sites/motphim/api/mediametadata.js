@@ -6,8 +6,6 @@ import {
 import request from 'request-promise';
 import _request from 'request';
 import crypto from './EHYME.js'
-var tough = require('tough-cookie');
-
 var btoa = require('btoa');
 
 const FAKE_HEADERS = {
@@ -120,19 +118,30 @@ class MotphimMediadata extends SiteMediaMetadata {
             if (!apiResp.status)
                 throw "Invalid Resp.\n" + JSON.stringify(apiResp);
             
-
+            console.log(apiResp);
             //apiResp["playlist"] is somtimes an array or a dict
             let toDecrypt = Array.isArray(apiResp["playlist"]) ? [apiResp["playlist"]] : 
                                                                 Object.keys(apiResp["playlist"]).map( k => apiResp["playlist"][k]); 
 
+
             for (const item of toDecrypt) {
-                item.forEach(f => {
-                    try {
-                        f.file = aes.dec(f.file, AESConfig.aesKey);
-                    } catch (e) {
-                        console.log("Failed to AES decrypt: " + f.file);
+                if(Array.isArray(item)) {
+                    item.forEach(f => {
+                        try {
+                            f.file = aes.dec(f.file, AESConfig.aesKey);
+                        } catch (e) {
+                            console.log("Failed to AES decrypt: " + f.file);
+                        }
+                    });
+                } else {
+                    if("file" in item) {
+                        try {
+                            item.file = aes.dec(item.file, AESConfig.aesKey);
+                        } catch (e) {
+                            console.log("Failed to AES decrypt: " + item.file);
+                        }
                     }
-                });
+                }
             }
             if (apiResp["mirror_link"]) {
                 try {
@@ -173,10 +182,19 @@ class MotphimMediadata extends SiteMediaMetadata {
         if (apiResp["playlist"]) {
             if(!Array.isArray(apiResp["playlist"])) {
                 for (const p of Object.keys(apiResp["playlist"])) {
-                    metadatas.push({
-                        "type": "video-sources",
-                        "data": apiResp["playlist"][p]
-                    });
+                    if(Array.isArray(apiResp["playlist"][p])) {
+                        metadatas.push({
+                            "type": "video-sources",
+                            "data": apiResp["playlist"][p]
+                        });
+                    }
+
+                    if(p == "hls") {
+                        metadatas.push({
+                            "type": "video-sources",
+                            "data": [{...apiResp["playlist"][p], type:"hls"}]
+                        });
+                    }
                 }
             } else {
                 metadatas.push({
