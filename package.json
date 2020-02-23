@@ -27,8 +27,9 @@
         "promise": "^8.0.3",
         "request-promise": "^4.2.5",
         "rimraf": "^3.0.1",
-        "uuid": "^3.4.0",
-        "tough-cookie": "^2.3.4"
+        "tough-cookie": "^2.3.4",
+        "url-join": "^4.0.1",
+        "uuid": "^3.4.0"
     },
     "devDependencies": {
         "babel-cli": "^6.26.0",

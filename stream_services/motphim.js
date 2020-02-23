@@ -48,7 +48,7 @@ class MotphimStream extends StreamingService {
                 "headers": FAKE_HEADERS,
 
             });
-            pasteLink = await gen_m3u8(pasteContent, "https://motphim.org");
+            pasteLink = await gen_m3u8(pasteContent, aux["src"]);
         } catch (e) {
             console.log(e);
         }

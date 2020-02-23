@@ -8,6 +8,7 @@ import {
 } from './helper.js'
 import Promise from 'promise';
 import atob from 'atob';
+import urljoin from "url-join";
 
 
 export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = true, pasteutil = LocalPaste) {
@@ -72,22 +73,32 @@ export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteut
         let urls = []
         urlsMatches.forEach(m => urls.push(m[1]));
         if (urls.length) {
+            for (let i = 0; i < urls.length; ++i) {
+                if (urls[i].substring(0,2) != "//" && urls[i].substring(0,4) != "http"){
+                    if(urls[i].charAt(0) == "/")
+                    {
+                        content = content.replace(urls[i], urljoin(extractHostname(origin), urls[i]));
+                        urls[i] = urljoin(extractHostname(origin), urls[i]);
+                    } else {
+                        let parentPath = origin.split("/");
+                        parentPath.pop();
+                        content = content.replace(urls[i], urljoin(parentPath.join("/"), urls[i]));
+                        urls[i] = urljoin(parentPath.join("/"), urls[i]);
+                    }
+                }
+            }
             if (redirectLink) {
                 let asyncTasks = []
-                urls.forEach(u => asyncTasks.push(getRedirectLink({
-                    uri: u,
-                    "headers": {
-                        "Origin": origin
-                    }
-                })));
+                // urls.forEach(u => asyncTasks.push(getRedirectLink({
+                //     uri: u,
+                //     "headers": {
+                //         "Origin": origin
+                //     }
+                // })));
                 let realUrls = await Promise.all(asyncTasks);
                 for (let i = 0; i < realUrls.length; ++i)
                     content = content.replace(urls[i], realUrls[i]);
 
-            }
-            for (let i = 0; i < urls.length; ++i) {
-                if (urls[i].charAt(i) == '/')
-                    content = content.replace(urls[i], `${extractHostname(origin)}${urls[i]}`);
             }
         }
         return pasteutil.createPaste("", content);
