@@ -73,7 +73,6 @@ export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteut
         let urlsMatches = [...content.matchAll(/#EXTINF:.*?,(?:\n#EXT-X-BYTERANGE:.*?)?(?: |\n)+(.*?)(?: |\n)+/)];
         let urls = urlsMatches.map(m => m[1]);
         console.log(urlsMatches.length);
-        urlsMatches.forEach(m => urls.push(m[1]));
         if (urls.length) {
             for (let i = 0; i < urls.length; ++i) {
                 if (urls[i].substring(0,2) != "//" && urls[i].substring(0,4) != "http"){
