@@ -72,7 +72,12 @@ export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteut
     fs.writeFile("./paste/save.m3u8", m3u8Content, (err) => {console.log(err)});
     console.log(content);
     try {
-        let urlsMatches = [...content.matchAll(/#EXTINF:.*?,(?:\n#EXT-X-BYTERANGE:.*?)?(?: |\n)+(.*?)(?: |\n)+/)];
+        let regx = new RegExp("#EXTINF:.*?,(?:\n#EXT-X-BYTERANGE:.*?)?(?: |\n)+(.*?)(?: |\n)+", "g");
+        let myArray;
+        let urlsMatches = [];
+        while((myArray = regx.exec(m3u8Content)) !== null){
+            urlsMatches.push(myArray);
+        }
         let urls = urlsMatches.map(m => m[1]);
         console.log(urlsMatches.length);
         if (urls.length) {
