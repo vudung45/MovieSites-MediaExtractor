@@ -77,27 +77,38 @@ class XemPhimPlusMetadata extends SiteMediaMetadata {
             let siteMetadata = await this._parseMetadata(aux);
             console.log(siteMetadata);
             let apiResp = await this._fetchApi(siteMetadata);
-            let sources = JSON.parse(apiResp.ok);
-            let hlsFiles = [];
-            let mp4Files = []
-            sources.forEach(s => {
-                if(s.type === "hls")
-                    hlsFiles.push(s);
-                else
-                    mp4Files.push(s);
-            });
-            if(hlsFiles.length) {
-                metadatas.push({
-                    type: "video-sources",
-                    data: hlsFiles
-                })
-            }
+            if(!apiResp["ok"]) {
+                let sources = apiResp["sources"];
+                console.log(sources)
+                if(sources.includes("iframe")) {
+                    metadatas.push({
+                        type: "iframe",
+                        data: sources.match(/<iframe.*?src="(.*?)".*<\/iframe>/)[1]
+                    });
+                }
+            } else {
+                let sources = JSON.parse(apiResp.ok);
+                let hlsFiles = [];
+                let mp4Files = []
+                sources.forEach(s => {
+                    if(s.type === "hls")
+                        hlsFiles.push(s);
+                    else
+                        mp4Files.push(s);
+                });
+                if(hlsFiles.length) {
+                    metadatas.push({
+                        type: "video-sources",
+                        data: hlsFiles
+                    })
+                }
 
-            if(mp4Files.length) {
-                metadatas.push({
-                    type: "video-sources",
-                    data: mp4Files
-                })
+                if(mp4Files.length) {
+                    metadatas.push({
+                        type: "video-sources",
+                        data: mp4Files
+                    })
+                }
             }
         } catch (e) {
             console.log(e);
