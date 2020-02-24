@@ -65,7 +65,7 @@ class MotphimMediadata extends SiteMediaMetadata {
                 "slug": slug,
                 "eId": aux["episodeID"],
                 "filmId": aux["movieID"],
-                "csrfToken": "QUcwZXVOUDhaMzFobHlvR3poMjJoZlBwUktiTGRoMkZzdmhwcnp0Vzlmaz0="
+                "csrfToken": csrfToken
             }
         } catch (e) {
             console.log("MotphimMediadata._parseMetadataFromSite().\n" + e);

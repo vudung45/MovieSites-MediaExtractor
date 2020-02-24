@@ -9,6 +9,7 @@ import {
     extractHostName
 } from '../utils/helper.js';
 import request from 'request-promise';
+import M3U8Generator from "../m3u8_generator/standard_generator.js"
 
 
 
@@ -41,20 +42,7 @@ class MotphimStream extends StreamingService {
 
 
     async _gen_m3u8(aux) {
-        let pasteLink = null;
-
-        try {
-            let pasteContent = await request({
-                "uri": aux["src"],
-                "headers": FAKE_HEADERS,
-
-            });
-            pasteLink = await gen_m3u8(pasteContent, aux["src"]);
-        } catch (e) {
-            console.log(e);
-        }
-        return pasteLink;
-
+        return await M3U8Generator.genM3U8({src: aux["src"]});
     }
 
 

@@ -12,6 +12,7 @@ import {
 } from '../../utils/helper.js'
 import MediaMetadata from './api/mediametadata.js'
 import { simpleGetLinkDriver, MotphimStream } from '../../stream_services/services.js';
+import M3U8Generator from '../../m3u8_generator/standard_generator.js';
 
 const KHOAITV_BASE_PHIMURL = "http://khoaitv.org/phim/"
 export class MotphimMediaExtractor extends MediaExtractor {
@@ -38,7 +39,7 @@ export class MotphimMediaExtractor extends MediaExtractor {
                     if (m["file"] == "error")
                         continue;
                     if(m["type"] == "hls"){
-                        let m3u8Paste = await MotphimStream._gen_m3u8({
+                        let m3u8Paste = await M3U8Generator.genM3U8({
                             src : m["file"]
                         });
                         if(m3u8Paste){

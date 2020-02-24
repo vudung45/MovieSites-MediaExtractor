@@ -97,10 +97,7 @@ export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteut
             if (redirectLink) {
                 let asyncTasks = []
                 urls.forEach(u => asyncTasks.push(getRedirectLink({
-                    uri: u,
-                    "headers": {
-                        "Origin": origin
-                    }
+                    uri: u
                 })));
                 console.log(urls);
                 let realUrls = await Promise.all(asyncTasks);

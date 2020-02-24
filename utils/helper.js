@@ -38,14 +38,14 @@ export async function getRedirectLink(options) {
                 ...options,
                 followAllRedirects: false,
                 followRedirect: false,
-                resolveWithFullResponse: false,
+                resolveWithFullResponse: true,
                 method: "HEAD",
             }, function(err, res, body) {
                 try {
                     resolve(res.headers.location);
                 } catch(e) {
-                    console.log("failed to get header for: "+options["uri"] ? options["uri"]: options["url"])
-                    reject(e);
+                    console.log("failed to get header for: "+(options["uri"] ? options["uri"]: options["url"]))
+                    resolve(options["uri"]);
                 }
             });
         } catch (e) {

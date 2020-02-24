@@ -1,5 +1,7 @@
 const fs = require('fs').promises;
 const uuidv1 = require('uuid/v1');
+import Config from "../configs/paste_config.js"
+import urljoin from "url-join";
 
 export default class LocalPaste {
     constructor(path) {
@@ -11,6 +13,6 @@ export default class LocalPaste {
         await fs.writeFile(`${this.path}/${fileName}`, content, {
             encoding: "utf-8"
         });
-        return "LOCAL_DIR/" + fileName;
+        return urljoin(Config.LocalPaste.httpExportPath, fileName);
     }
 }

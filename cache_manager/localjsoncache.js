@@ -25,7 +25,8 @@ export default class LocalJsonCacheManager extends CacheManager {
         if (!(key in this.data))
             return null;
 
-        if (this.data[key].access + this.data[key].ttl < new Date().getTime()) {
+        if (this.data[key].ttl && 
+            this.data[key].access + this.data[key].ttl < new Date().getTime()) {
             await this.delete(key);
             return null;
         }
