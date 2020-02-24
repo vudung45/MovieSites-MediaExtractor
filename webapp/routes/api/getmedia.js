@@ -6,6 +6,7 @@ import Hydrax from "../../../stream_services/hydrax.js"
 import LocalJsonCacheManager from "../../../cache_manager/localjsoncache.js"
 import DIDSoftProxy from "../../../proxy_services/didproxy.js"
 import KhoaiTVMediaExtractor from "../../../sites/khoaitv/mediaextractor.js";
+import XemPhimPlusMediaExtractor from "../../../sites/xemphimplus/mediaextractor.js";
 import BiluTVMediaExtractor from "../../../sites/bilutv/mediaextractor.js";
 import VuViPhimmoiMediaExtractor from "../../../sites/vuviphimmoi/mediaextractor.js";
 import MotphimMediaExtrator from "../../../sites/motphim/mediaextractor.js";
@@ -91,6 +92,24 @@ async function driver(url) {
         let episodeId = regexMatch[2];
         try {
             mediaSources = await KhoaiTVMediaExtractor.extractMedias({
+                movieID: movieId,
+                episodeID: episodeId
+            });
+        } catch (e) {
+            console.log(e);
+            throw "Error while getting media sources for " + url;
+        }
+    } else if (url.includes("xemphimplus")) {
+        let regexMatch = url.match(/.*xem-phim-(.*)\/(.*)-.*?.html$/);
+        if (!regexMatch) {
+            throw `Invalid xemphimplus url format: ${url}`;
+        }
+
+        let movieId = regexMatch[1];
+        console.log(regexMatch);
+        let episodeId = regexMatch[2];
+        try {
+            mediaSources = await XemPhimPlusMediaExtractor.extractMedias({
                 movieID: movieId,
                 episodeID: episodeId
             });

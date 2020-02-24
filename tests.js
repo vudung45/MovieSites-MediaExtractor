@@ -3,54 +3,23 @@ import KhoaiTVMediaExtractor from "./sites/khoaitv/mediaextractor.js";
 import BiluTVMediaExtractor from "./sites/bilutv/mediaextractor.js"
 import VuViPhimmoiMediaExtractor from "./sites/vuviphimmoi/mediaextractor.js"
 import MotphimMediaExtrator from "./sites/motphim/mediaextractor.js"
+import XemPhimPlusMediaExtractor from "./sites/xemphimplus/mediaextractor.js"
 import { Hydrax } from './stream_services/services.js'
 import { getSupportedSites, moduleUseCache, getStreamServices,getRedirectLink} from './utils/helper.js'
 import LocalJsonCacheManager from './cache_manager/localjsoncache.js'
 import request from 'request-promise';
 
 
-
-// setup cache for site apis
-let apiCache = new LocalJsonCacheManager({
-	"path": "./cache_files/siteAPI.cache"
-}, false);
-
-let supportedSites = getSupportedSites(__dirname+"/sites");
-supportedSites.map(site => {
-	moduleUseCache(__dirname+`/sites/${site}/api/mediametadata.js`, apiCache);
-});
-
-
-// setup cache for streaming services
-let streamServices = getStreamServices(__dirname+"/stream_services");
-let streamCache = new LocalJsonCacheManager({
-	"path":   "./cache_files/stream.cache"
-}, false);
-
-streamServices.map(site => {
-	moduleUseCache(__dirname+`/stream_services/${site}.js`, streamCache);
-});
-
-
 /* TESTS */
 
 (async function() {
-let khoaitv_test = new KhoaiTVMediaExtractor(13422,1);
-	khoaitv_test.extractMedias().then(r => {
-		console.log(`[TEST 1] get media srcs for: http://khoaitv.org/phim/dreaming-back-to-the-qing-dynasty-mong-hoi-dai-thanh-13422`);
+	XemPhimPlusMediaExtractor.extractMedias({"movieID": "tang-lop-itaewon", "episodeID": 1}).then(r => {
+		console.log(`[TEST 1] get media srcs for: http://xemphimplus.net/xem-phim-tang-lop-itaewon/1-sv1.html`);
 		console.log(r);
 		}
 	);
 })();
 
-(async function() {
-let khoaitv_test = new KhoaiTVMediaExtractor(13318,1);
-	khoaitv_test.extractMedias().then(r => {
-		console.log(`[TEST 1.5] get media srcs for: http://khoaitv.org/phim/joy-of-life-khanh-du-nien-13318-tap-1`);
-		console.log(r);
-		}
-	);
-})();
 
 
 (async function() {
@@ -105,13 +74,12 @@ let khoaitv_test = new KhoaiTVMediaExtractor(13318,1);
 })();
 
 
-(async function() {
-	let test = new MotphimMediaExtrator(7741, 97939);
-	MotphimMediaExtrator.extractMedias({
-			"movieID" : 7741,
-			"episodeID": 97939
-	}).then(r => {
-		console.log(`[TEST 7] get media srcs for: https://motphim.net/xem-phim/thuong-co-mat-uoc-tap-1-7741_97939.html`);
-		console.log(r);
-	}).catch(e => console.log(e));
-})();
+// (async function() {
+// 	MotphimMediaExtrator.extractMedias({
+// 			"movieID" : 7741,
+// 			"episodeID": 97939
+// 	}).then(r => {
+// 		console.log(`[TEST 7] get media srcs for: https://motphim.net/xem-phim/thuong-co-mat-uoc-tap-1-7741_97939.html`);
+// 		console.log(r);
+// 	}).catch(e => console.log(e));
+// })();

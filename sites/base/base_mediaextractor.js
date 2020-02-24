@@ -22,9 +22,10 @@ export default class MediaExtractor {
 
     async extractMedias(aux) {
         let medias = await this._extractMedias(aux);
+        console.log(medias)
         if (!this.cacheManager)
             return {
-                "sources": JSON.parse("[" + medias.toString() + "]"),
+                "sources": medias,
                 "mirrors": []
             };
 

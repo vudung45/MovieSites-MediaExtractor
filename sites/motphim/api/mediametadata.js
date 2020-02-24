@@ -77,8 +77,15 @@ class MotphimMediadata extends SiteMediaMetadata {
         let apiResp = null;
         try {
             console.log("BYPASS MOTPHIM CSRF...")
-            let keygen =  jquery_beauty(aux.csrfToken, aux.eId, "dung-getlink-nua-ban-oi");
-            let mkey = btoa(btoa(btoa(aux.eId)));
+            console.log(aux);
+            let keygen = mkey = null;
+            try {
+                keygen =  jquery_beauty(aux.csrfToken, aux.eId, "dung-getlink-nua-ban-oi");
+                mkey = btoa(btoa(btoa(aux.eId)));
+            } catch (e) {
+                console.log("Failed to decrypt: "+e);
+                return null;
+            }
 
             console.log({
                 keygen: keygen,

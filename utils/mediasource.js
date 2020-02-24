@@ -18,7 +18,7 @@ export default class MediaSource {
 
     getJson() {
         return {
-            "src": this.file,
+            "src": this.src,
             "type": this.type,
             "label": this.label,
         };

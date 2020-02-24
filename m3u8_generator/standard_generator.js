@@ -38,7 +38,7 @@ class StandardM3U8Genator extends Base {
             throw "fetchContent() returns null"
 
         if(urlResp.includes("#EXT-X-STREAM-INF"))
-            return await this._processPlaylist(urlResp, aux, getProp(aux, "redirectLink", true), getProp(aux, "useGoogleProxy", true));
+            return await this._processPlaylist(urlResp, aux, getProp(aux, "redirectLink", true), getProp(aux, "useGoogleProxy", false));
         else
             return await this._processListItem(urlResp, aux, getProp(aux, "redirectLink", true), getProp(aux, "useGoogleProxy", false));
     }
@@ -88,7 +88,7 @@ class StandardM3U8Genator extends Base {
         return await this.paster.createPaste("", m3u8Content);
     }
 
-    async _processListItem(m3u8Content, aux, redirectLink=true, useGoogleProxy=true) {
+    async _processListItem(m3u8Content, aux, redirectLink=true, useGoogleProxy=false) {
         let urlObj = new URL(aux["src"]);
         let regx = new RegExp("#EXTINF:.*?,(?:\n#EXT-X-BYTERANGE:.*?)?(?: |\n)+(.*?)(?: |$)", "gm");
         let myArray;
