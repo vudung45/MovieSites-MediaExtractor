@@ -9,7 +9,7 @@ import {
 let CACHE_MANAGER_SETTINGS = {
     "default": {
         path: "./cache_files/default.cache",
-        ttl: 60 * 60,
+        ttl: 60 * 30, // 30 mins
         syncRoutine: true
     },
     "defaultMirrorsCache": {
