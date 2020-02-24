@@ -21,7 +21,7 @@ class XemPhimPlusMetadata extends SiteMediaMetadata {
 
     async _parseMetadata(aux) {
         let urlResp = await request({
-                "uri": `${XEMPHIMPLUSE_BASE_URL}-${aux["movieID"]}/${aux["episodeID"]}-sv1.html`,
+                "uri": `${XEMPHIMPLUSE_BASE_URL}-${aux["movieID"]}/${aux["episodeID"]}-sv${aux["svID"]}.html`,
                 "headers": FAKE_HEADERS
         });
 

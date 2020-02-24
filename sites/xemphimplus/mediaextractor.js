@@ -33,7 +33,8 @@ export class XemPhimPlusMediaExtractor extends MediaExtractor {
         //1st layer cache
         let mediaMetadatas = await MediaMetadata.getMediaMetadata({
             "movieID": aux["movieID"],
-            "episodeID": aux["episodeID"]
+            "episodeID": aux["episodeID"],
+            "svID": aux["svID"]
         });
         let medias = {
             "direct": [],

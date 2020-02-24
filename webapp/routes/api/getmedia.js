@@ -88,7 +88,6 @@ async function driver(url) {
         }
 
         let movieId = regexMatch[1];
-        console.log(regexMatch);
         let episodeId = regexMatch[2];
         try {
             mediaSources = await KhoaiTVMediaExtractor.extractMedias({
@@ -100,18 +99,19 @@ async function driver(url) {
             throw "Error while getting media sources for " + url;
         }
     } else if (url.includes("xemphimplus")) {
-        let regexMatch = url.match(/.*xem-phim-(.*)\/(.*)-.*?.html$/);
+        let regexMatch = url.match(/.*xem-phim-(.*)\/(.*)-sv(\d*).html$/);
         if (!regexMatch) {
             throw `Invalid xemphimplus url format: ${url}`;
         }
 
         let movieId = regexMatch[1];
-        console.log(regexMatch);
         let episodeId = regexMatch[2];
+        let svID = regexMatch[3]
         try {
             mediaSources = await XemPhimPlusMediaExtractor.extractMedias({
                 movieID: movieId,
-                episodeID: episodeId
+                episodeID: episodeId,
+                svID: svID
             });
         } catch (e) {
             console.log(e);
