@@ -6,7 +6,7 @@
         "test": " npm run build && node dist/tests.js",
         "clean": "rimraf dist/",
         "build": "npm run clean && babel ./ --ignore node_modules/ --out-dir dist/ --copy-files",
-        "start": " npm run build && node dist/webapp/webapp.js"
+        "start": "rm -rf ./paste/*.m3u8 && rm -rf ./cache_files/*.cache && npm run build && node dist/webapp/webapp.js"
     },
     "author": "",
     "license": "MIT",
