@@ -30,7 +30,8 @@ export default class LocalJsonCacheManager extends CacheManager {
             return null;
         }
 
-        await this.syncLocalData(); // dont need to await
+        //this.data[key].access = new Date().getTime();
+        await this.syncLocalData(); 
         return this.data[key].value;
     }
 

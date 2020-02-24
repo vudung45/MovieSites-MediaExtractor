@@ -1,6 +1,6 @@
 # Pirated-MovieSites-MediaExtractor
 
-This source code support extracting Media Sources (direct video source with no ads) from various pirated movie sites such as (Bilutv, KhoaiTV, etc.). There is a caching system implemented to avoid IP bans, so the code is basically production ready.
+Supports extracting Media Sources (direct video source with no ads) from various pirated movie sites such as (Bilutv, KhoaiTV, etc.). Caching system is implemented to avoid IP bans, so the code is basically production ready.
 ```bash
 npm install
 npm run start
