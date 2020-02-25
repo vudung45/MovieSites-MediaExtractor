@@ -38,6 +38,7 @@ class FimFastMetadata extends SiteMediaMetadata {
     }
 
     async _parseMetadata(aux) {
+        console.log(FIMFAST_BASE_URL.format(aux["movieName"], aux["episode"]));
         let urlResp = await request({
                 "uri": FIMFAST_BASE_URL.format(aux["movieName"], aux["episode"]),
                 "headers": FAKE_HEADERS
@@ -75,20 +76,20 @@ class FimFastMetadata extends SiteMediaMetadata {
         /* 
          @param 
                 aux     {
-                            "movieID"  : ...,
-                            "episodeID": ...
+                            "moveName"  : ...,
+                            "episode": ...
                         }
          @return
-                        {
+                        [{
                             "type": ..., // video-sources, iframe
                             "data" ...
-                        }
+                        }...]
         */
         let metadatas = [];
         try {
             let siteMetadata = await this._parseMetadata(aux);
             console.log(siteMetadata);
-            let jsonResp = await this._fetchApi({...siteMetadata, url:FIMFAST_BASE_URL.format(aux["movieID"], aux["episodeID"])});
+            let jsonResp = await this._fetchApi({...siteMetadata, url:FIMFAST_BASE_URL.format(aux["movieName"], aux["episode"])});
             if(!jsonResp)
                 return null;
 

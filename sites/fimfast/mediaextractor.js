@@ -24,8 +24,8 @@ export class FimFastMediaExtractor extends MediaExtractor {
     async _extractMedias(aux) {
         //1st layer cache
         let mediaMetadatas = await MediaMetadata.getMediaMetadata({
-            "movieID": aux["movieID"],
-            "episodeID": aux["episodeID"]
+            "movieName": aux["movieName"],
+            "episode": aux["episode"]
         });
         let medias = {
             "direct": [],
