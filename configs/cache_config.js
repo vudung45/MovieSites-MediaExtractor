@@ -5,7 +5,7 @@ import LocalCacheManager from "../cache_manager/localjsoncache.js";
 
 let config = {
     // ** M3U8 Generator cache
-    "../m3u8_generator/standard_generator" : {
+    "../m3u8_generator/standard_generator.js" : {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/m3u8-generator.cache",
