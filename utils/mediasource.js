@@ -13,7 +13,7 @@ export default class MediaSource {
 
     static createFrom(json) {
         return new MediaSource(getProp(json, "file") ? getProp(json, "file") : getProp(json, "src"), 
-                    getProp(json, "type"), getProp(json, "label"), getProp(json, "permaLink", false));
+                    getProp(json, "type"), getProp(json, "label") ? getProp(json, "label"): getProp(json, "quality"), getProp(json, "permaLink", false));
     }
 
     getJson() {

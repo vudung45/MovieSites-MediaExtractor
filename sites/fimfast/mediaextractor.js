@@ -18,15 +18,14 @@ import M3U8Generator from '../../m3u8_generator/standard_generator.js';
 
 
 
-export class XemPhimPlusMediaExtractor extends MediaExtractor {
+export class FimFastMediaExtractor extends MediaExtractor {
 
 
     async _extractMedias(aux) {
         //1st layer cache
         let mediaMetadatas = await MediaMetadata.getMediaMetadata({
             "movieID": aux["movieID"],
-            "episodeID": aux["episodeID"],
-            "svID": aux["svID"]
+            "episodeID": aux["episodeID"]
         });
         let medias = {
             "direct": [],
@@ -39,16 +38,17 @@ export class XemPhimPlusMediaExtractor extends MediaExtractor {
 
         for (let mediaMetadata of mediaMetadatas) {
             if (mediaMetadata.type == "video-sources") {
-                let bundle = []
+                let bundle = [];
                 for(let m of mediaMetadata.data) {
-                    if (m["file"] == "error")
+                    if (m["src"] == "error" )
                         continue;
+
                     if(m["type"] == "hls"){
                         let m3u8Paste = await M3U8Generator.genM3U8({
-                            src : m["file"]
+                            src : m["src"]
                         });
                         if(m3u8Paste){
-                            m["file"] = m3u8Paste;
+                            m["src"] = m3u8Paste;
                             m["permaLink"] = true;
                         }
                     }
@@ -73,4 +73,4 @@ export class XemPhimPlusMediaExtractor extends MediaExtractor {
 
 }
 
-module.exports = new XemPhimPlusMediaExtractor();
+module.exports = new FimFastMediaExtractor();

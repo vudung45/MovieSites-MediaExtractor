@@ -8,6 +8,7 @@ import DIDSoftProxy from "../../../proxy_services/didproxy.js"
 import KhoaiTVMediaExtractor from "../../../sites/khoaitv/mediaextractor.js";
 import XemPhimPlusMediaExtractor from "../../../sites/xemphimplus/mediaextractor.js";
 import BiluTVMediaExtractor from "../../../sites/bilutv/mediaextractor.js";
+import FimFastMediaExtractor from "../../../sites/fimfast/mediaextractor.js";
 import VuViPhimmoiMediaExtractor from "../../../sites/vuviphimmoi/mediaextractor.js";
 import MotphimMediaExtrator from "../../../sites/motphim/mediaextractor.js";
 
@@ -112,6 +113,23 @@ async function driver(url) {
                 movieID: movieId,
                 episodeID: episodeId,
                 svID: svID
+            });
+        } catch (e) {
+            console.log(e);
+            throw "Error while getting media sources for " + url;
+        }
+    } else if (url.includes("fimfast")) {
+        let regexMatch = url.match(/.*\/(.*?)\/tap-(\d*?)/);
+        if (!regexMatch) {
+            throw `Invalid fimfast url format: ${url}`;
+        }
+
+        let movieId = regexMatch[1];
+        let episodeId = regexMatch[2];
+        try {
+            mediaSources = await FimFastMediaExtractor.extractMedias({
+                movieID: movieId,
+                episodeID: episodeId
             });
         } catch (e) {
             console.log(e);

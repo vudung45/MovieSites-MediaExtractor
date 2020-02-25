@@ -54,6 +54,14 @@ let config = {
             "syncRoutine": true
         }
     },
+    "../sites/fimfast/api/mediametadata.js" : {
+        "cacheManager": LocalCacheManager,
+        "settings": {
+            "path": "./cache_files/fimfast-api.cache",
+            "ttl": 60 * 30, // 30 mins
+            "syncRoutine": true
+        }
+    },
 
     // *** Cache settings for sites media extractor ***
     "../sites/khoaitv/mediaextractor.js" : {
@@ -92,6 +100,14 @@ let config = {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/xemphimplus-mirror.cache",
+            "ttl": 60 * 60 * 24, // 1 days 
+            "syncRoutine": true
+        }
+    },
+    "../sites/fimfast/mediaextractor.js" : {
+        "cacheManager": LocalCacheManager,
+        "settings": {
+            "path": "./cache_files/fimfast-mirror.cache",
             "ttl": 60 * 60 * 24, // 1 days 
             "syncRoutine": true
         }
