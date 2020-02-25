@@ -13,7 +13,7 @@ const FAKE_HEADERS = {
 
 //https://fimfast.com/tho-san-quai-vat/tap-3-mat-trang-phan-phuc
 const FIMFAST_BASE_URL = { 
-    "format": (movieName, episode) => `https://fimfast.com/${movieName}/tap-${episode}`
+    "format": (movieName, episode) => `https://fimfast.com/${movieName}${episode ? "/tap-"+episode : ""}`
 } 
 //https://fimfast.com/api/v2/films/17651/episodes/254469
 const FIMFAST_API = { 
@@ -38,10 +38,8 @@ class FimFastMetadata extends SiteMediaMetadata {
     }
 
     async _parseMetadata(aux) {
-        console.log(aux);
-        console.log(FIMFAST_BASE_URL.format(aux["movieID"], aux["episodeID"]));
         let urlResp = await request({
-                "uri": FIMFAST_BASE_URL.format(aux["movieID"], aux["episodeID"]),
+                "uri": FIMFAST_BASE_URL.format(aux["movieName"], aux["episode"]),
                 "headers": FAKE_HEADERS
         });
 
@@ -52,17 +50,17 @@ class FimFastMetadata extends SiteMediaMetadata {
     }
 
     async _fetchApi(aux){
-        console.log(aux);
-        console.log("__cfduid="+uuidv1().replace(/-/g,""))
+        let fakeCookies = uuidv1().replace(/-/g,"");
+        console.log("__cfduid="+fakeCookies)
         let urlResp = await request({
                 "uri": FIMFAST_API.format(aux["movieID"], aux["episodeID"]),
                 "headers": {
                     "X-Requested-With": "XMLHttpRequest",
                     "Content-Type":   "application/json",
                     "Origin": "https://fimfast.com",
-                    "Referer": "https://fimfast.com/bao-dong-khan-tinh-yeu-ha-canh/tap-1",
+                    "Referer": aux["url"],
                     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36",
-                    "Cookie": request.cookie("__cfduid="+uuidv1().replace(/-/g,""))
+                    "Cookie": request.cookie("__cfduid="+fakeCookies)
                 },
         });
        
@@ -90,7 +88,7 @@ class FimFastMetadata extends SiteMediaMetadata {
         try {
             let siteMetadata = await this._parseMetadata(aux);
             console.log(siteMetadata);
-            let jsonResp = await this._fetchApi(siteMetadata);
+            let jsonResp = await this._fetchApi({...siteMetadata, url:FIMFAST_BASE_URL.format(aux["movieID"], aux["episodeID"])});
             if(!jsonResp)
                 return null;
 

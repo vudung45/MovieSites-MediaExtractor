@@ -119,17 +119,15 @@ async function driver(url) {
             throw "Error while getting media sources for " + url;
         }
     } else if (url.includes("fimfast")) {
-        let regexMatch = url.match(/.*\/(.*?)\/tap-(\d*?)/);
-        if (!regexMatch) {
-            throw `Invalid fimfast url format: ${url}`;
-        }
 
-        let movieId = regexMatch[1];
-        let episodeId = regexMatch[2];
+        let urlObj = new URL(url);
+        let paths = urlObj.pathname.split("/");
+        let movieName = paths[1];
+        let episode = paths.length === 3 ? paths[2].split("tap-")[1] : null;
         try {
             mediaSources = await FimFastMediaExtractor.extractMedias({
-                movieID: movieId,
-                episodeID: episodeId
+                movieName: movieName,
+                episode: episode
             });
         } catch (e) {
             console.log(e);
