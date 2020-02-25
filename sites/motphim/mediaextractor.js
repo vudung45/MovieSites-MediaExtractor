@@ -33,7 +33,7 @@ export class MotphimMediaExtractor extends MediaExtractor {
 
         console.log(mediaMetadatas)
         for (let mediaMetadata of mediaMetadatas) {
-            if (mediaMetadata.type == "video-sources") {
+            if (mediaMetadata.type === "video-sources") {
                 let bundle = []
                 for(let m of mediaMetadata.data) {
                     if (m["file"] == "error")
@@ -50,13 +50,14 @@ export class MotphimMediaExtractor extends MediaExtractor {
                     bundle.push(MediaSource.createFrom(m))
                 }
                 medias["direct"].push(bundle); // direct video source
-            } else if (mediaMetadata.type == "iframe") {
+            } else if (mediaMetadata.type === "iframe") {
                 let bundle = []
                 let iframeSrc = mediaMetadata.data;
                 //2nd layer cache
                 let streamLinks = await simpleGetLinkDriver({
                     "url": iframeSrc
                 });
+                console.log("here")
                 if (streamLinks)
                     medias[iframeSrc] = streamLinks;
 

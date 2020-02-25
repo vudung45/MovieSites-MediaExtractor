@@ -25,7 +25,7 @@ function getSlugFromUrl(url){
 exports.simpleGetLinkDriver = async function(aux) {
     let medias = [];
     let url = aux["url"];
-    if (url.includes("hydrax.net") || url.includes("slug")) {
+    if (url.includes("hydrax") || url.includes("slug")) {
         let slug = "slug" in aux ? aux["slug"] : getSlugFromUrl(url)
         let hlsMedias = await exports.Hydrax.getMediaSource({
             "slug": slug,

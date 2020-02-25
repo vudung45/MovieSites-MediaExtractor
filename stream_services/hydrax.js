@@ -38,6 +38,7 @@ async function getHydraxResp(api, hydrax_slug, hydrax_key = null, origin, proxy 
         "method": "POST",
         "proxy": proxy // possible IP ban
     }));
+    console.log(body)
     // POST to hyrax API
     let apiResponse = JSON.parse(body);
 
@@ -78,6 +79,7 @@ class Hydrax extends StreamingService {
 
     async _getHydraxApiResp(aux) {
         let hydraxApiResp = null;
+        console.log(aux);
         try {
             if ("key" in aux && aux["key"]) // use vip API
                 hydraxApiResp = await getVipHydraxResp(aux["slug"], aux["key"], aux["origin"], await this._getProxy());
@@ -103,12 +105,13 @@ class Hydrax extends StreamingService {
             cacheKey: JSON.stringify(aux) + "_getHydraxApiResp"
         });
 
+
         if (!hydraxApiResp)
             return null;
 
         let medias = [];
         //process api response to genenerate m3u8 files
-        if ("ping" in hydraxApiResp && hydraxApiResp["ping"].includes("smamuhh1metro")) { //schema for smauhh1metro
+        if ("ping" in hydraxApiResp) { //schema for smauhh1metro
             let server = "stream" in hydraxApiResp["servers"] ? hydraxApiResp["servers"]["stream"] : hydraxApiResp["servers"][0];
             if (!server)
                 throw "No server found in: \n" + JSON.stringify(hydraxApiResp);

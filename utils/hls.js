@@ -24,16 +24,15 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
         let d = data['ranges'];
         let s = 0;
         let u = data['ids'];
-        let jointAsync = [];
-        data['ids'].forEach((id) => jointAsync.push(request({
-            "uri": `https://${streamServer}/html/${data['sig']}/${data['id']}/${id}/0.html?domain=hydrax.net`,
+        let jointAsync = data['ids'].map((id) => request({
+            "uri": `https://${streamServer}/html/${data['sig']}/${data['id']}/${id}/0.html?domain=playhydrax.com`,
             "headers": {
                 "Content-Type": "application/json",
                 "Origin": "https://hydrax.net/",
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36'
             },
             "method": "GET"
-        })));
+        }));
         let jointAwait = await Promise.all(jointAsync);
         let chunksUrls = [];
         jointAwait.forEach(m => {
@@ -61,6 +60,7 @@ export async function gen_m3u8_smamuhh1metro(streamServer, data, driveLink = tru
         txt += "#EXT-X-ENDLIST";
         return await pasteutil.createPaste("", txt);
     } catch (e) {
+        console.log(e);
         console.log("Error generating m3u8 gen_m3u8_smamuhh1metro()");
     }
     return null;
