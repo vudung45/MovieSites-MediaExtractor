@@ -3,11 +3,8 @@ import {
 } from "../../utils/helper.js"
 import MediaSource from "../../utils/mediasource.js"
 export default class MediaExtractor {
-    constructor(movieID, episodeID, prefix) {
-        this.movieID = movieID;
-        this.episodeID = episodeID;
+    constructor(prefix) {
         this.prefix = prefix;
-        this.cacheManager = null;
     }
 
     useCache(cacheManager) {

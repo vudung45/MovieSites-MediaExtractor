@@ -33,6 +33,7 @@ class StandardM3U8Genator extends Base {
     }
 
     async genM3U8(aux) {
+        console.log(aux);
         let urlResp = await this.fetchContent(aux); // utilize cache
         if(!urlResp)
             throw "fetchContent() returns null"

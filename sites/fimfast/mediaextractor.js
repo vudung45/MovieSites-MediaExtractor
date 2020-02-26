@@ -19,7 +19,9 @@ import M3U8Generator from '../../m3u8_generator/standard_generator.js';
 
 
 export class FimFastMediaExtractor extends MediaExtractor {
-
+    constructor(prefix="FimFast") {
+        super(prefix);
+    }
 
     async _extractMedias(aux) {
         //1st layer cache
@@ -27,6 +29,8 @@ export class FimFastMediaExtractor extends MediaExtractor {
             "movieName": aux["movieName"],
             "episode": aux["episode"]
         });
+
+        console.log(mediaMetadatas);
         let medias = {
             "direct": [],
             "iframe": []
@@ -48,6 +52,7 @@ export class FimFastMediaExtractor extends MediaExtractor {
                             src : m["src"]
                         });
                         if(m3u8Paste){
+                            m = {...m} // clone
                             m["src"] = m3u8Paste;
                             m["permaLink"] = true;
                         }
