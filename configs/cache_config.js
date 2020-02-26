@@ -5,7 +5,7 @@ import LocalCacheManager from "../cache_manager/localjsoncache.js";
 
 let config = {
     // ** M3U8 Generator cache
-    "../m3u8_generator/standard_generator.js" : {
+    "../m3u8_generator/standard_generator.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/m3u8-generator.cache",
@@ -14,7 +14,7 @@ let config = {
         }
     },
     // *** Cache settings for sites mediametadata ***
-    "../sites/bilutv/api/mediametadata.js" : {
+    "../sites/bilutv/api/mediametadata.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/bilutv-api.cache",
@@ -22,7 +22,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../sites/khoaitv/api/mediametadata.js" : {
+    "../sites/khoaitv/api/mediametadata.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/khoaitv-api.cache",
@@ -30,7 +30,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../sites/motphim/api/mediametadata.js" : {
+    "../sites/motphim/api/mediametadata.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/motphim-api.cache",
@@ -38,7 +38,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../sites/vuviphimmoi/api/mediametadata.js" : {
+    "../sites/vuviphimmoi/api/mediametadata.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/vuviphimmoi-api.cache",
@@ -46,7 +46,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../sites/xemphimplus/api/mediametadata.js" : {
+    "../sites/xemphimplus/api/mediametadata.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/xemphimplus-api.cache",
@@ -54,7 +54,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../sites/fimfast/api/mediametadata.js" : {
+    "../sites/fimfast/api/mediametadata.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/fimfast-api.cache",
@@ -64,7 +64,7 @@ let config = {
     },
 
     // *** Cache settings for sites media extractor ***
-    "../sites/khoaitv/mediaextractor.js" : {
+    "../sites/khoaitv/mediaextractor.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "/cache_files/khoaitv-mirror.cache",
@@ -72,7 +72,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../sites/bilutv/mediaextractor.js" : {
+    "../sites/bilutv/mediaextractor.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/bilutv-mirror.cache",
@@ -80,7 +80,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../sites/motphim/mediaextractor.js" : {
+    "../sites/motphim/mediaextractor.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/motphim-mirror.cache",
@@ -88,7 +88,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../sites/vuviphimmoi/mediaextractor.js" : {
+    "../sites/vuviphimmoi/mediaextractor.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/vuviphimmoi-mirror.cache",
@@ -96,7 +96,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../sites/xemphimplus/mediaextractor.js" : {
+    "../sites/xemphimplus/mediaextractor.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/xemphimplus-mirror.cache",
@@ -104,7 +104,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../sites/fimfast/mediaextractor.js" : {
+    "../sites/fimfast/mediaextractor.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/fimfast-mirror.cache",
@@ -114,7 +114,7 @@ let config = {
     },
 
     // *** Cache settings for streaming services ***
-    "../stream_services/hydrax.js" : {
+    "../stream_services/hydrax.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/hydrax.cache",
@@ -122,7 +122,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../stream_services/motphim.js" : {
+    "../stream_services/motphim.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/motphim.cache",
@@ -130,7 +130,7 @@ let config = {
             "syncRoutine": true
         }
     },
-    "../stream_services/vuviphimxyz.js" : {
+    "../stream_services/vuviphimxyz.js": {
         "cacheManager": LocalCacheManager,
         "settings": {
             "path": "./cache_files/vuviphimxyz.cache",
@@ -140,8 +140,8 @@ let config = {
     },
 }
 
-for(let path of Object.keys(config)) {
-    config[urljoin(__dirname, path)] =  config[path];
+for (let path of Object.keys(config)) {
+    config[urljoin(__dirname, path)] = config[path];
     delete config[path];
 }
 

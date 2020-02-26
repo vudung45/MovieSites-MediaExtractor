@@ -12,11 +12,11 @@ exports.VuViPhimStream = VuViPhimStream;
 exports.MotphimStream = MotphimStream;
 
 
-function getSlugFromUrl(url){
+function getSlugFromUrl(url) {
     let urlObj = new URL(url);
-    if(url.includes("watch?v="))
+    if (url.includes("watch?v="))
         return urlObj.searchParams.get("v")
-    else if(url.includes("slug="))
+    else if (url.includes("slug="))
         return urlObj.searchParams.get("slug")
 
     return null;

@@ -28,7 +28,7 @@ import {
 
 const KHOAITV_BASE_PHIMURL = "http://khoaitv.org/phim/"
 export class KhoaiTVMediaExtractor extends MediaExtractor {
-    constructor(prefix="KhoaiTV") {
+    constructor(prefix = "KhoaiTV") {
         super(prefix);
     }
 

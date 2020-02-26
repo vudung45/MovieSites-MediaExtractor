@@ -22,8 +22,8 @@ class XemPhimPlusMetadata extends SiteMediaMetadata {
     async _parseMetadata(aux) {
         console.log(`${XEMPHIMPLUSE_BASE_URL}-${aux["movieID"]}/${aux["episodeID"]}-sv${aux["svID"]}.html`);
         let urlResp = await request({
-                "uri": `${XEMPHIMPLUSE_BASE_URL}-${aux["movieID"]}/${aux["episodeID"]}-sv${aux["svID"]}.html`,
-                "headers": FAKE_HEADERS
+            "uri": `${XEMPHIMPLUSE_BASE_URL}-${aux["movieID"]}/${aux["episodeID"]}-sv${aux["svID"]}.html`,
+            "headers": FAKE_HEADERS
         });
 
         let halim_cfg = JSON.parse(urlResp.match(/<script>.*var halim_cfg += +({.*}?)<\/script>/)[1]);
@@ -40,25 +40,25 @@ class XemPhimPlusMetadata extends SiteMediaMetadata {
         }
     }
 
-    async _fetchApi(aux){
+    async _fetchApi(aux) {
         let playerUrl = aux.player_url;
         let csrfToken = aux.csrfToken;
         delete aux["player_url"];
         delete aux["csrfToken"];
         let urlParams = Object.keys(aux).map(function(k) {
-                            return encodeURIComponent(k) + '=' + (aux[k] ? encodeURIComponent(aux[k]) : "")
-                    }).join('&')
+            return encodeURIComponent(k) + '=' + (aux[k] ? encodeURIComponent(aux[k]) : "")
+        }).join('&')
         console.log(urlParams)
-        let resp =JSON.parse(await request({
-                "uri": `${playerUrl}?${urlParams}`,
-                "headers": {
-                    ...FAKE_HEADERS,
-                    "X-HALIM-PLAYER": true,
-                    "X-CSRF-TOKEN": csrfToken
-                }
+        let resp = JSON.parse(await request({
+            "uri": `${playerUrl}?${urlParams}`,
+            "headers": {
+                ...FAKE_HEADERS,
+                "X-HALIM-PLAYER": true,
+                "X-CSRF-TOKEN": csrfToken
+            }
         }))
         console.log(resp);
-        if(resp.data.status && resp.data.sources)
+        if (resp.data.status && resp.data.sources)
             return resp.data;
         return null;
     }
@@ -81,12 +81,12 @@ class XemPhimPlusMetadata extends SiteMediaMetadata {
             let siteMetadata = await this._parseMetadata(aux);
             console.log(siteMetadata);
             let apiResp = await this._fetchApi(siteMetadata);
-            if(!apiResp)
+            if (!apiResp)
                 return null;
 
-            if(!apiResp["ok"]) {
+            if (!apiResp["ok"]) {
                 let sources = apiResp["sources"];
-                if(sources.includes("iframe")) {
+                if (sources.includes("iframe")) {
                     metadatas.push({
                         type: "iframe",
                         data: sources.match(/<iframe.*?src="(.*?)".*<\/iframe>/)[1]
@@ -97,19 +97,19 @@ class XemPhimPlusMetadata extends SiteMediaMetadata {
                 let hlsFiles = [];
                 let mp4Files = []
                 sources.forEach(s => {
-                    if(s.type === "hls")
+                    if (s.type === "hls")
                         hlsFiles.push(s);
                     else
                         mp4Files.push(s);
                 });
-                if(hlsFiles.length) {
+                if (hlsFiles.length) {
                     metadatas.push({
                         type: "video-sources",
                         data: hlsFiles
                     })
                 }
 
-                if(mp4Files.length) {
+                if (mp4Files.length) {
                     metadatas.push({
                         type: "video-sources",
                         data: mp4Files

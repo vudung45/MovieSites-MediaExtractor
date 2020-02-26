@@ -80,10 +80,10 @@ class MotphimMediadata extends SiteMediaMetadata {
             console.log(aux);
             let keygen = mkey = null;
             try {
-                keygen =  jquery_beauty(aux.csrfToken, aux.eId, "dung-getlink-nua-ban-oi");
+                keygen = jquery_beauty(aux.csrfToken, aux.eId, "dung-getlink-nua-ban-oi");
                 mkey = btoa(btoa(btoa(aux.eId)));
             } catch (e) {
-                console.log("Failed to decrypt: "+e);
+                console.log("Failed to decrypt: " + e);
                 return null;
             }
 
@@ -104,10 +104,10 @@ class MotphimMediadata extends SiteMediaMetadata {
                 method: "POST"
             });
 
-            console.log("__cfduld from server: "+csrfRsp)
+            console.log("__cfduld from server: " + csrfRsp)
 
             // successfully bypassed..
-            let cookie = request.cookie("__cfduld="+csrfRsp);
+            let cookie = request.cookie("__cfduld=" + csrfRsp);
             apiResp = JSON.parse(await request({
                 uri: MOTPHIM_API,
                 headers: {
@@ -121,17 +121,17 @@ class MotphimMediadata extends SiteMediaMetadata {
                 body: `x_dataLink=${aux.dataLink}&x_eId=${aux.eId}&x_vId=${aux.vId}&x_slug=${aux.slug}`,
                 method: "POST"
             }));
-    
+
             if (!apiResp.status)
                 throw "Invalid Resp.\n" + JSON.stringify(apiResp);
-            
+
             //apiResp["playlist"] is somtimes an array or a dict
-            let toDecrypt = Array.isArray(apiResp["playlist"]) ? [apiResp["playlist"]] : 
-                                                                Object.keys(apiResp["playlist"]).map( k => apiResp["playlist"][k]); 
+            let toDecrypt = Array.isArray(apiResp["playlist"]) ? [apiResp["playlist"]] :
+                Object.keys(apiResp["playlist"]).map(k => apiResp["playlist"][k]);
 
 
             for (const item of toDecrypt) {
-                if(Array.isArray(item)) {
+                if (Array.isArray(item)) {
                     item.forEach(f => {
                         try {
                             f.file = aes.dec(f.file, AESConfig.aesKey);
@@ -140,7 +140,7 @@ class MotphimMediadata extends SiteMediaMetadata {
                         }
                     });
                 } else {
-                    if("file" in item) {
+                    if ("file" in item) {
                         try {
                             item.file = aes.dec(item.file, AESConfig.aesKey);
                         } catch (e) {
@@ -188,19 +188,22 @@ class MotphimMediadata extends SiteMediaMetadata {
             });
 
         if (apiResp["playlist"]) {
-            if(!Array.isArray(apiResp["playlist"])) {
+            if (!Array.isArray(apiResp["playlist"])) {
                 for (const p of Object.keys(apiResp["playlist"])) {
-                    if(Array.isArray(apiResp["playlist"][p])) {
+                    if (Array.isArray(apiResp["playlist"][p])) {
                         metadatas.push({
                             "type": "video-sources",
                             "data": apiResp["playlist"][p]
                         });
                     }
 
-                    if(p == "hls") {
+                    if (p == "hls") {
                         metadatas.push({
                             "type": "video-sources",
-                            "data": [{...apiResp["playlist"][p], type:"hls"}]
+                            "data": [{
+                                ...apiResp["playlist"][p],
+                                type: "hls"
+                            }]
                         });
                     }
                 }

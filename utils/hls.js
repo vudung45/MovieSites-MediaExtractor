@@ -75,15 +75,14 @@ export async function gen_m3u8(m3u8Content, origin, redirectLink = true, pasteut
         let regx = new RegExp("#EXTINF:.*?,(?:\n#EXT-X-BYTERANGE:.*?)?(?: |\n)+(.*?)(?: |\n)+", "g");
         let myArray;
         let urlsMatches = [];
-        while((myArray = regx.exec(m3u8Content)) !== null){
+        while ((myArray = regx.exec(m3u8Content)) !== null) {
             urlsMatches.push(myArray);
         }
         let urls = urlsMatches.map(m => m[1]);
         if (urls.length) {
             for (let i = 0; i < urls.length; ++i) {
-                if (urls[i].substring(0,2) != "//" && urls[i].substring(0,4) != "http"){
-                    if(urls[i].charAt(0) == "/")
-                    {
+                if (urls[i].substring(0, 2) != "//" && urls[i].substring(0, 4) != "http") {
+                    if (urls[i].charAt(0) == "/") {
                         content = content.replace(urls[i], urljoin(extractHostname(origin), urls[i]));
                         urls[i] = urljoin(extractHostname(origin), urls[i]);
                     } else {

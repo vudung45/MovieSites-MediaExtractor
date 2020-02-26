@@ -32,7 +32,7 @@ const AJAX_PLAYER_API = "https://bilutv.org/ajax/player/";
 
 export class BiluTVMediaExtractor extends MediaExtractor {
 
-    constructor(prefix="BiluTV") {
+    constructor(prefix = "BiluTV") {
         super(prefix);
     }
 

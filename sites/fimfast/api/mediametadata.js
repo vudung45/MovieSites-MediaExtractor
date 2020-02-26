@@ -12,20 +12,20 @@ const FAKE_HEADERS = {
 
 
 //https://fimfast.com/tho-san-quai-vat/tap-3-mat-trang-phan-phuc
-const FIMFAST_BASE_URL = { 
+const FIMFAST_BASE_URL = {
     "format": (movieName, episode) => `https://fimfast.com/${movieName}${episode ? "/tap-"+episode : ""}`
-} 
+}
 //https://fimfast.com/api/v2/films/17651/episodes/254469
-const FIMFAST_API = { 
+const FIMFAST_API = {
     "format": (movieID, episodeID) => `https://fimfast.com/api/v2/films/${movieID}/episodes/${episodeID}`
 }
 
-function encodeString(e, t=69) {
+function encodeString(e, t = 69) {
     var a = "";
     e.toString();
     for (var i = 0; i < e.length; i++) {
-        var r = e.charCodeAt(i)
-          , n = r ^ t;
+        var r = e.charCodeAt(i),
+            n = r ^ t;
         a += String.fromCharCode(n)
     }
     return a;
@@ -40,8 +40,8 @@ class FimFastMetadata extends SiteMediaMetadata {
     async _parseMetadata(aux) {
         console.log(FIMFAST_BASE_URL.format(aux["movieName"], aux["episode"]));
         let urlResp = await request({
-                "uri": FIMFAST_BASE_URL.format(aux["movieName"], aux["episode"]),
-                "headers": FAKE_HEADERS
+            "uri": FIMFAST_BASE_URL.format(aux["movieName"], aux["episode"]),
+            "headers": FAKE_HEADERS
         });
 
         return {
@@ -50,23 +50,23 @@ class FimFastMetadata extends SiteMediaMetadata {
         }
     }
 
-    async _fetchApi(aux){
-        let fakeCookies = uuidv1().replace(/-/g,"");
-        console.log("__cfduid="+fakeCookies)
+    async _fetchApi(aux) {
+        let fakeCookies = uuidv1().replace(/-/g, "");
+        console.log("__cfduid=" + fakeCookies)
         let urlResp = await request({
-                "uri": FIMFAST_API.format(aux["movieID"], aux["episodeID"]),
-                "headers": {
-                    "X-Requested-With": "XMLHttpRequest",
-                    "Content-Type":   "application/json",
-                    "Origin": "https://fimfast.com",
-                    "Referer": aux["url"],
-                    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36",
-                    "Cookie": request.cookie("__cfduid="+fakeCookies)
-                },
+            "uri": FIMFAST_API.format(aux["movieID"], aux["episodeID"]),
+            "headers": {
+                "X-Requested-With": "XMLHttpRequest",
+                "Content-Type": "application/json",
+                "Origin": "https://fimfast.com",
+                "Referer": aux["url"],
+                "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36",
+                "Cookie": request.cookie("__cfduid=" + fakeCookies)
+            },
         });
-       
+
         let jsonResp = JSON.parse(urlResp);
-        if(jsonResp.sources)
+        if (jsonResp.sources)
             return jsonResp;
 
         return null;
@@ -89,25 +89,28 @@ class FimFastMetadata extends SiteMediaMetadata {
         try {
             let siteMetadata = await this._parseMetadata(aux);
             console.log(siteMetadata);
-            let jsonResp = await this._fetchApi({...siteMetadata, url:FIMFAST_BASE_URL.format(aux["movieName"], aux["episode"])});
-            if(!jsonResp)
+            let jsonResp = await this._fetchApi({
+                ...siteMetadata,
+                url: FIMFAST_BASE_URL.format(aux["movieName"], aux["episode"])
+            });
+            if (!jsonResp)
                 return null;
 
             let sources = jsonResp.sources;
             let mp4Sources = [];
             let hlsSources = [];
             Object.keys(sources).map(server => {
-                if(!sources[server])
+                if (!sources[server])
                     return;
-                if(Array.isArray(sources[server]) && sources[server].length) {
+                if (Array.isArray(sources[server]) && sources[server].length) {
                     console.log(sources[server][0]);
-                    if(sources[server][0].type == "video/mp4") {
+                    if (sources[server][0].type == "video/mp4") {
                         mp4Sources.push({
                             type: "video-sources",
-                            data: sources[server] 
+                            data: sources[server]
                         })
                     }
-                } else if (server == "hls" || server=== "hrx") {
+                } else if (server == "hls" || server === "hrx") {
                     sources[server] = encodeString(sources[server]);
                     hlsSources.push({
                         type: "video-sources",
@@ -116,7 +119,7 @@ class FimFastMetadata extends SiteMediaMetadata {
                             label: "VIDEO",
                             type: "hls"
                         }]
-                    }); 
+                    });
                 }
             });
             metadatas = mp4Sources.concat(hlsSources);

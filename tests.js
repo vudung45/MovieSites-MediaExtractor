@@ -5,8 +5,15 @@ import VuViPhimmoiMediaExtractor from "./sites/vuviphimmoi/mediaextractor.js"
 import FimFastMediaExtractor from "./sites/fimfast/mediaextractor.js"
 import MotphimMediaExtrator from "./sites/motphim/mediaextractor.js"
 import XemPhimPlusMediaExtractor from "./sites/xemphimplus/mediaextractor.js"
-import { Hydrax } from './stream_services/services.js'
-import { getSupportedSites, moduleUseCache, getStreamServices,getRedirectLink} from './utils/helper.js'
+import {
+    Hydrax
+} from './stream_services/services.js'
+import {
+    getSupportedSites,
+    moduleUseCache,
+    getStreamServices,
+    getRedirectLink
+} from './utils/helper.js'
 import LocalJsonCacheManager from './cache_manager/localjsoncache.js'
 import request from 'request-promise';
 
@@ -22,11 +29,13 @@ import request from 'request-promise';
 // })();
 
 (async function() {
-	FimFastMediaExtractor.extractMedias({"movieID": "bao-dong-khan-tinh-yeu-ha-canh", "episodeID": 1}).then(r => {
-		console.log(`[TEST 1] get media srcs for: https://fimfast.com/bao-dong-khan-tinh-yeu-ha-canh/tap-1`);
-		console.log(r);
-		}
-	);
+    FimFastMediaExtractor.extractMedias({
+        "movieID": "bao-dong-khan-tinh-yeu-ha-canh",
+        "episodeID": 1
+    }).then(r => {
+        console.log(`[TEST 1] get media srcs for: https://fimfast.com/bao-dong-khan-tinh-yeu-ha-canh/tap-1`);
+        console.log(r);
+    });
 })();
 
 

@@ -11,13 +11,16 @@ import {
     getProp
 } from '../../utils/helper.js'
 import MediaMetadata from './api/mediametadata.js'
-import { simpleGetLinkDriver, MotphimStream } from '../../stream_services/services.js';
+import {
+    simpleGetLinkDriver,
+    MotphimStream
+} from '../../stream_services/services.js';
 import M3U8Generator from '../../m3u8_generator/standard_generator.js';
 
 const KHOAITV_BASE_PHIMURL = "http://khoaitv.org/phim/"
 export class MotphimMediaExtractor extends MediaExtractor {
 
-    constructor(prefix="Motphim") {
+    constructor(prefix = "Motphim") {
         super(prefix);
     }
 
@@ -39,15 +42,17 @@ export class MotphimMediaExtractor extends MediaExtractor {
         for (let mediaMetadata of mediaMetadatas) {
             if (mediaMetadata.type === "video-sources") {
                 let bundle = []
-                for(let m of mediaMetadata.data) {
+                for (let m of mediaMetadata.data) {
                     if (m["file"] == "error")
                         continue;
-                    if(m["type"] == "hls"){
+                    if (m["type"] == "hls") {
                         let m3u8Paste = await M3U8Generator.genM3U8({
-                            src : m["file"]
+                            src: m["file"]
                         });
-                        if(m3u8Paste){
-                            m = {...m} // cloneMotphim
+                        if (m3u8Paste) {
+                            m = {
+                                ...m
+                            } // cloneMotphim
                             m["file"] = m3u8Paste;
                             m["permaLink"] = true;
                         }

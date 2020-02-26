@@ -42,7 +42,9 @@ class MotphimStream extends StreamingService {
 
 
     async _gen_m3u8(aux) {
-        return await M3U8Generator.genM3U8({src: aux["src"]});
+        return await M3U8Generator.genM3U8({
+            src: aux["src"]
+        });
     }
 
 

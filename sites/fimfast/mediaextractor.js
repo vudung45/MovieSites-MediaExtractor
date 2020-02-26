@@ -19,7 +19,7 @@ import M3U8Generator from '../../m3u8_generator/standard_generator.js';
 
 
 export class FimFastMediaExtractor extends MediaExtractor {
-    constructor(prefix="FimFast") {
+    constructor(prefix = "FimFast") {
         super(prefix);
     }
 
@@ -43,16 +43,18 @@ export class FimFastMediaExtractor extends MediaExtractor {
         for (let mediaMetadata of mediaMetadatas) {
             if (mediaMetadata.type == "video-sources") {
                 let bundle = [];
-                for(let m of mediaMetadata.data) {
-                    if (m["src"] == "error" )
+                for (let m of mediaMetadata.data) {
+                    if (m["src"] == "error")
                         continue;
 
-                    if(m["type"] == "hls"){
+                    if (m["type"] == "hls") {
                         let m3u8Paste = await M3U8Generator.genM3U8({
-                            src : m["src"]
+                            src: m["src"]
                         });
-                        if(m3u8Paste){
-                            m = {...m} // clone
+                        if (m3u8Paste) {
+                            m = {
+                                ...m
+                            } // clone
                             m["src"] = m3u8Paste;
                             m["permaLink"] = true;
                         }
