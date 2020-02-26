@@ -79,7 +79,6 @@ class Hydrax extends StreamingService {
 
     async _getHydraxApiResp(aux) {
         let hydraxApiResp = null;
-        console.log(aux);
         try {
             if ("key" in aux && aux["key"]) // use vip API
                 hydraxApiResp = await getVipHydraxResp(aux["slug"], aux["key"], aux["origin"], await this._getProxy());

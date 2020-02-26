@@ -17,6 +17,10 @@ import M3U8Generator from '../../m3u8_generator/standard_generator.js';
 const KHOAITV_BASE_PHIMURL = "http://khoaitv.org/phim/"
 export class MotphimMediaExtractor extends MediaExtractor {
 
+    constructor(prefix=Motphim) {
+        super(prefix);
+    }
+
     async _extractMedias(aux) {
         //1st layer cache
         let mediaMetadatas = await MediaMetadata.getMediaMetadata({
@@ -43,6 +47,7 @@ export class MotphimMediaExtractor extends MediaExtractor {
                             src : m["file"]
                         });
                         if(m3u8Paste){
+                            m = {...m} // clone
                             m["file"] = m3u8Paste;
                             m["permaLink"] = true;
                         }
@@ -58,8 +63,9 @@ export class MotphimMediaExtractor extends MediaExtractor {
                     "url": iframeSrc
                 });
                 console.log("here")
-                if (streamLinks)
+                if (streamLinks) {
                     medias[iframeSrc] = streamLinks;
+                }
 
                 medias["iframe"].push([new MediaSource(iframeSrc, "iframe")]);
             }

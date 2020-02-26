@@ -82,9 +82,11 @@ class MotphimStream extends StreamingService {
             "src": apiResp["d"],
             "cacheKey": aux["d"] // cache based on unique "d" metadata
         });
-        if (!m3u8Paste)
+        if (!m3u8Paste) {
             m3u8Paste = apiResp["d"]; // if fails to get paste, then just use the one provided
-        medias.push(new MediaSource(m3u8Paste, "hls", null, true, ));
+            medias.push(new MediaSource(m3u8Paste, "hls", null, false));
+        } else
+            medias.push(new MediaSource(m3u8Paste, "hls", null, true));
         return medias;
     }
 }

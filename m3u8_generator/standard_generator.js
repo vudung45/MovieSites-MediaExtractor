@@ -15,7 +15,6 @@ class StandardM3U8Genator extends Base {
 
     async fetchContent(aux){
         let src = aux["src"];
-        console.log(aux["src"])
         let headers = getProp(aux, "headers")
         let urlObj = new URL(src);
         let urlResp = await request({
@@ -33,7 +32,6 @@ class StandardM3U8Genator extends Base {
     }
 
     async genM3U8(aux) {
-        console.log(aux);
         let urlResp = await this.fetchContent(aux); // utilize cache
         if(!urlResp)
             throw "fetchContent() returns null"
@@ -57,7 +55,7 @@ class StandardM3U8Genator extends Base {
         let urls = matches.map(match => match[1]);
         let processedUrls = urls.slice();
         for(let i = 0; i < urls.length; ++i) {
-            if(urls[i].substring(0,2) !== "//" && urls[i].substring(0,4) !== "http"){ //it probably starts with /
+            if(urls[i].substring(0,2) !== "//" && urls[i].substring(0,4) !== "http"){
                 if(urls[i].charAt(0) === '/') // absolute path
                     processedUrls[i]= urljoin(urlObj.origin, urls[i]);
                 else  {// relattive path
@@ -67,19 +65,18 @@ class StandardM3U8Genator extends Base {
                 }
             }       
         }
-        console.log(processedUrls);
         let asyncTasks = processedUrls.map(url => this.fetchContent({...aux, src : url}));
         let subPlaylistsContents = await Promise.all(asyncTasks);
         let i = 0;
         asyncTasks = subPlaylistsContents.map(content => {
             i += 1;
             if(!content)
-                throw "fetchContent() returns null!";
+                throw "fetchContent() returns null! for url: " + processedUrls[i-1];
             else
                 return this._processListItem(content, {...aux, src: processedUrls[i-1]}, redirectLink, useGoogleProxy)
         });
-        let subPlaylistsPastes = await Promise.all(asyncTasks);
 
+        let subPlaylistsPastes = await Promise.all(asyncTasks);
         for(let i = 0; i < urls.length; ++i) {
             if(!subPlaylistsPastes[i])
                 throw "Failed to process url "+urls[i]
@@ -110,16 +107,24 @@ class StandardM3U8Genator extends Base {
                 }
             }
         }
+
         if (redirectLink) {
-            let asyncTasks = processedUrls.map(u => getRedirectLink({
-                uri: u,
-                "headers": {
-                    "Origin": urlObj.origin,
-                    "Referer": urlObj.origin
-                }
-            }));
-            processedUrls = await Promise.all(asyncTasks);
-            console.log(processedUrls);
+            try {
+
+                let asyncTasks = processedUrls.map(u => getRedirectLink({
+                    uri: u,
+                    "headers": {
+                        "Origin": urlObj.origin,
+                        "Referer": urlObj.origin
+                    }
+                }));
+                processedUrls = await Promise.all(asyncTasks);
+            } catch(e) {
+                console.log(e);
+                console.log("A promise failed while getting redirect links for m3u8 ("+aux["src"]+"), chunk: ");
+                console.log(processedUrls);
+                return null;
+            }
         }
 
         if(useGoogleProxy) {

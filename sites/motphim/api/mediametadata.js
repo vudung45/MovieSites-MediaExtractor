@@ -125,7 +125,6 @@ class MotphimMediadata extends SiteMediaMetadata {
             if (!apiResp.status)
                 throw "Invalid Resp.\n" + JSON.stringify(apiResp);
             
-            console.log(apiResp);
             //apiResp["playlist"] is somtimes an array or a dict
             let toDecrypt = Array.isArray(apiResp["playlist"]) ? [apiResp["playlist"]] : 
                                                                 Object.keys(apiResp["playlist"]).map( k => apiResp["playlist"][k]); 
@@ -159,6 +158,8 @@ class MotphimMediadata extends SiteMediaMetadata {
                     console.log("Failed to AES decrypt: " + apiResp["mirror_link"]);
                 }
             }
+
+            console.log(apiResp);
         } catch (e) {
             console.log("Error in MotphimMediadata._fetchApi().\n" + e);
         }

@@ -48,6 +48,7 @@ export class XemPhimPlusMediaExtractor extends MediaExtractor {
                             src : m["file"]
                         });
                         if(m3u8Paste){
+                            m = {...m} //clonse
                             m["file"] = m3u8Paste;
                             m["permaLink"] = true;
                         }
