@@ -32,6 +32,10 @@ const AJAX_PLAYER_API = "https://bilutv.org/ajax/player/";
 
 export class BiluTVMediaExtractor extends MediaExtractor {
 
+    constructor(prefix="BiluTV") {
+        super(prefix);
+    }
+
     async _extractMedias(aux) {
 
         // parse the webpage source to extract movieID and episodeID
