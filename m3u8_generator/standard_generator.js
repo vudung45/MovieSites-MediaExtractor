@@ -118,22 +118,20 @@ class StandardM3U8Genator extends Base {
         }
 
         if (redirectLink) {
-            try {
-
-                let asyncTasks = processedUrls.map(u => getRedirectLink({
-                    uri: u,
-                    "headers": {
-                        "Origin": urlObj.origin,
-                        "Referer": urlObj.origin
-                    }
-                }));
-                processedUrls = await Promise.all(asyncTasks);
-            } catch (e) {
+            let asyncTasks = processedUrls.map(u => getRedirectLink({
+                uri: u,
+                "headers": {
+                    "Origin": urlObj.origin,
+                    "Referer": urlObj.origin
+                }
+            }).catch(e => u));
+            processedUrls = await Promise.all(asyncTasks).catch(e => {
                 console.log(e);
-                console.log("A promise failed while getting redirect links for m3u8 (" + aux["src"] + "), chunk: ");
-                console.log(processedUrls);
                 return null;
-            }
+            });
+            
+            if(!processedUrls)
+                return null;
         }
 
         if (useGoogleProxy) {

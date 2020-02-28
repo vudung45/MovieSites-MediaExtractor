@@ -45,7 +45,7 @@ export async function getRedirectLink(options) {
                     resolve(res.headers.location);
                 } catch (e) {
                     console.log("failed to get header for: " + (options["uri"] ? options["uri"] : options["url"]))
-                    resolve(options["uri"]);
+                    reject(e);
                 }
             });
         } catch (e) {
