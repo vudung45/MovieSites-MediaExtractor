@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!-- saved from url=(0059)http://nickdesaulniers.github.io/netfix/demo/bufferAll.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+  </head>
+  <body>
+    <video muted="muted" src="https://www.googleapis.com/drive/v3/files/1ywcM3ev4FIYve3sep2HT58zkynbAcfZb?alt=media&key=AIzaSyADkl6gP47jplINbMvxOOe-XzmZq4UHEaU" controls="" ></video>
+    <script>
+      var video = document.querySelector('video');
+      video.crossOrigin = 'anonymous';
+
+      var assetURL = 'test_upload.mp4';
+      // Need to be specific for Blink regarding codecs
+      // ./mp4info frag_bunny.mp4 | grep Codec
+      var mimeCodec = 'video/mp4; codecs="avc1.428028, mp4a.40.2"';
+
+      if ('MediaSource' in window && MediaSource.isTypeSupported(mimeCodec)) {
+        var mediaSource = new MediaSource;
+        //console.log(mediaSource.readyState); // closed
+        video.src = URL.createObjectURL(mediaSource);
+        mediaSource.addEventListener('sourceopen', sourceOpen);
+      } else {
+        console.error('Unsupported MIME type or codec: ', mimeCodec);
+      }
+
+      function sourceOpen (_) {
+        
+        var mediaSource = this;
+        //console.log(this.readyState); // open
+        this.readyState="open";
+        var sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
+        sourceBuffer.addEventListener('updateend', function (_) {
+            mediaSource.endOfStream();
+            video.play();
+            //console.log(mediaSource.readyState); // ended
+        });
+        fetchAB(assetURL, function (buf) {
+          console.log(buf)
+          sourceBuffer.appendBuffer(buf);
+        });
+      };
+
+      function fetchAB (url, cb) {
+        console.log(url);
+        var xhr = new XMLHttpRequest;
+        xhr.open('get', url, true);
+        xhr.responseType = 'arraybuffer';
+        xhr.onload = function () {
+          cb(xhr.response);
+        };
+        xhr.send();
+      };
+    </script>
+  
+
+
+</body></html>

@@ -31,7 +31,7 @@ class XemPhimPlusMetadata extends SiteMediaMetadata {
         return {
             "player_url": halim_cfg.player_url,
             "episode_slug": halim_cfg.episode_slug,
-            "server": halim_cfg.server,
+            "server_id": halim_cfg.server,
             "subsv_id": halim_cfg.subsv_id,
             "post_id": halim_cfg.post_id,
             "nonce": urlResp.match(/data-nonce="(.*)?"/)[1],
@@ -54,10 +54,10 @@ class XemPhimPlusMetadata extends SiteMediaMetadata {
             "headers": {
                 ...FAKE_HEADERS,
                 "X-HALIM-PLAYER": true,
-                "X-CSRF-TOKEN": csrfToken
+                "X-CSRF-TOKEN": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
             }
-        }))
-        console.log(resp);
+        }));
         if (resp.data.status && resp.data.sources)
             return resp.data;
         return null;
@@ -81,41 +81,53 @@ class XemPhimPlusMetadata extends SiteMediaMetadata {
             let siteMetadata = await this._parseMetadata(aux);
             console.log(siteMetadata);
             let apiResp = await this._fetchApi(siteMetadata);
-            if (!apiResp)
+            console.log(apiResp)
+            if (!apiResp.status) {
+                console.log( "no data")
                 return null;
-
-            if (!apiResp["ok"]) {
-                let sources = apiResp["sources"];
-                if (sources.includes("iframe")) {
-                    metadatas.push({
-                        type: "iframe",
-                        data: sources.match(/<iframe.*?src="(.*?)".*<\/iframe>/)[1]
-                    });
-                }
-            } else {
-                let sources = JSON.parse(apiResp.ok);
-                let hlsFiles = [];
-                let mp4Files = []
-                sources.forEach(s => {
-                    if (s.type === "hls")
-                        hlsFiles.push(s);
-                    else
-                        mp4Files.push(s);
-                });
-                if (hlsFiles.length) {
-                    metadatas.push({
-                        type: "video-sources",
-                        data: hlsFiles
-                    })
-                }
-
-                if (mp4Files.length) {
-                    metadatas.push({
-                        type: "video-sources",
-                        data: mp4Files
-                    })
-                }
             }
+
+            let raw_script =  apiResp.sources;
+            console.log(raw_script);
+            let source =  raw_script.match(/sources: *(\[.*\])/)[1];
+
+            console.log(source);
+            return [{
+                "type": "video-sources",
+                data: JSON.parse(source)
+            }];
+            // if (!apiResp["data"]) {
+            //     let sources = apiResp["sources"];
+            //     if (sources.includes("iframe")) {
+            //         metadatas.push({
+            //             type: "iframe",
+            //             data: sources.match(/<iframe.*?src="(.*?)".*<\/iframe>/)[1]
+            //         });
+            //     }
+            // } else {
+            //     let sources = JSON.parse(apiResp.ok);
+            //     let hlsFiles = [];
+            //     let mp4Files = []
+            //     sources.forEach(s => {
+            //         if (s.type === "hls")
+            //             hlsFiles.push(s);
+            //         else
+            //             mp4Files.push(s);
+            //     });
+            //     if (hlsFiles.length) {
+            //         metadatas.push({
+            //             type: "video-sources",
+            //             data: hlsFiles
+            //         })
+            //     }
+
+            //     if (mp4Files.length) {
+            //         metadatas.push({
+            //             type: "video-sources",
+            //             data: mp4Files
+            //         })
+            //     }
+            // }
         } catch (e) {
             console.log(e);
         }
